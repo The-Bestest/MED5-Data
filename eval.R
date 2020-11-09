@@ -8,7 +8,7 @@ Questionnaire_lvl2 <- read.csv(file.path(,), stringsAsFactors=FALSE)
 #Function to test for normality using shapiro.test and transform the data.
 normality_test <- function(IA1, IA2)
 {
-  #Test for noramlity and transform the data if needed.
+  #Test for normality and transform the data if needed.
   shapiro_result <- shapiro.test(IA1)
   if (shapiro_result$p.value < 0.05)
   {
@@ -21,8 +21,16 @@ normality_test <- function(IA1, IA2)
   {
     implicit_agency$IA2 <- znorm(IA2)
   }
+  #QQ plots for IA1 and IA2
+  QQ1 <- ggplot(implicit_agency, aes(sample = implicit_agency$IA1)) +
+    stat_qq() +
+    stat_qq_line()
   
+  QQ2 <- ggplot(implicit_agency, aes(sample = implicit_agency$IA2)) +
+    stat_qq() +
+    stat_qq_line()
 }
+#new function for boxplots
 
 
 #Perform a wilcox rank-sum test on all SoO questions at both levels.
