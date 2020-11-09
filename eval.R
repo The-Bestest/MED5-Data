@@ -22,16 +22,26 @@ normality_test <- function(IA1, IA2)
     implicit_agency$IA2 <- znorm(IA2)
   }
   #QQ plots for IA1 and IA2
-  QQ1 <- ggplot(implicit_agency, aes(sample = implicit_agency$IA1)) +
+  QQ1 <- ggplot(implicit_agency, aes(sample = IA1)) +
     stat_qq() +
     stat_qq_line()
   
-  QQ2 <- ggplot(implicit_agency, aes(sample = implicit_agency$IA2)) +
+  QQ2 <- ggplot(implicit_agency, aes(sample = IA2)) +
     stat_qq() +
     stat_qq_line()
 }
-#new function for boxplots
-
+#function for boxplot containing SoO, XA, Frustration, Proprioception
+boxplot <- function(SoO, XA, Frustration, Proprioception, Level)
+  {
+  plot_SoO <- ggplot(subset(Questionnaire, !is.na(SoO)),aes(x = SoO, y = Level, colour = "#E69F00"))
+  + geom_boxplot()
+  plot_XA <- ggplot(subset(Questionnaire, !is.na(XA)),aes(x = XA, y = Level, colour = "#56B4E9"))
+  + geom_boxplot()
+  plot_Frustration <- ggplot(subset(Questionnaire, !is.na(Frustration)),aes(x = Frustration, y = Level, colour = "#009E73"))
+  + geom_boxplot()
+  plot_Proprioception <- ggplot(subset(Questionnaire, !is.na(Proprioception)),aes(x = Proprioception, y = Level, colour = "#F0E442"))
+  + geom_boxplot()
+  }
 
 #Perform a wilcox rank-sum test on all SoO questions at both levels.
 wilcox_SoO_Q1res <- wilcox.test(SoO_lvl1$Q1, SoO_lvl2$Q1, paired = TRUE)
