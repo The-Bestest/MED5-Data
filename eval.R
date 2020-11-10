@@ -9,17 +9,10 @@ normality_test <- function(IA1, IA2)
 {
   #Test for normality and transform the data if needed.
   shapiro_result <- shapiro.test(IA1)
-  if (shapiro_result$p.value < 0.05)
-  {
-    implicit_agency$IA1 <- znorm(IA1)
-  }
   
   #Test second level for normality and transform the data if needed.
   shapiro_result_lvl2 <- shapiro.test(IA2)
-  if (shapiro_result_lvl2$p.value < 0.05)
-  {
-    implicit_agency$IA2 <- znorm(IA2)
-  }
+
   #QQ plots for IA1 and IA2
   QQ1 <- ggplot(implicit_agency, aes(sample = IA1)) +
     stat_qq() +
