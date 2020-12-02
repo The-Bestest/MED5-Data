@@ -4,8 +4,21 @@ Questionnaire <- read.csv(file.path(,), stringsAsFactors=FALSE)
 
 IA_df <- data.frame(TI = implicit_agency$temporal_interval, prcvd = implicit_agency$prcvd_interval, IA1 = implicit_agency$IA1, IA2 = implicit_agency$IA2)
 Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, XA = Questionnaire$XA, frustration = Questionnaire$frustration, Proprioception = Questionnaire$proprioception, lvl = Questionnaire$level)
+##i would recommend merging IA and Questionnaire based on ParticipantID
+##assuming both IA_df and Questionnaire_df have that shared identifier (participantID or PID)
+##df <- merge(IA_df,Questionnaire_df)
+
+
 Q_lvl1 <- filter(Questionnaire_df, lvl == 1)
 Q_lvl2 <- filter(Questionnaire_df, lvl == 2)
+
+##I wouldn't split this (keep all data in df), use the group functions (or group_by functions) for more powerful and less typing 
+## e.g. try
+##library(skimr)
+##library(tidyverse)
+##skim(Questionnaire_df)
+## or grouped by lvl
+##Questionnaire_df %>% group_by(lvl) %>% skim() 
 
 
 #Function to test for normality using shapiro.test and transform the data.
@@ -27,6 +40,11 @@ normality_test <- function(IA1, IA2)
     stat_qq_line()
 }
 
+##more efficient to do this with a facet 
+##let's assume all data is in df
+##df %>% select(SoO, XA, Proprioception, Frustration,Level) %>% pivot_longer() ... need to better understand what you want to do in tems of variable names but see example below
+##try this: you can remove each pipe symbol (and what comes after) to see how the data gets transformed through the pipe
+##iris %>% select(Sepal.Length, Sepal.Width, Petal.Length, Species) %>% pivot_longer(!Species, values_to="val",names_to="var") %>% ggplot(aes(x = val, y = Species))+geom_boxplot()+facet_wrap(~var)
 
 
 #function for boxplot containing SoO, XA, Frustration, Proprioception
@@ -41,7 +59,11 @@ boxplot <- function(SoO, XA, Frustration, Proprioception, Level)
   plot_Proprioception <- ggplot(subset(Questionnaire, !is.na(Proprioception)),aes(x = Proprioception, y = Level, colour = "#F0E442"))
   + geom_boxplot()
 }
-
+##more efficient to do this with a facet 
+##let's assume all data is in df
+##df %>% select(SoO, XA, Proprioception, Frustration,Level) %>% pivot_longer() ... need to better understand what you want to do in tems of variable names but see example below
+##try this: you can remove each pipe symbol (and what comes after) to see how the data gets transformed through the pipe
+##iris %>% select(Sepal.Length, Sepal.Width, Petal.Length, Species) %>% pivot_longer(!Species, values_to="val",names_to="var") %>% ggplot(aes(x = val, y = Species))+geom_boxplot()+facet_wrap(~var)
 
 
 Process_IA <- function()
@@ -68,8 +90,7 @@ Process_IA <- function()
   implicit_agency$t_result <- t.test(implicit_agency$IA1, implicit_agency$IA2, paired = TRUE, conf.level=0.95)
 }
 
-
-
+##check out the skim command in skimr will do much more for you (see above)
 Process_questionnaire <- function()
 {
   lvl1_Q_means <- vector("double", ncol(Q_lvl1), nrow(2))
@@ -97,12 +118,13 @@ Process_questionnaire <- function()
   wilcox_frustration <- wilcox.test(Q_lvl1$frustration, Q_lvl2$frustration, paired = TRUE)
 }
 
-
-
+##have a look at something like this
+##http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
 correlation <- function()
 {
   cor_lvl1 <- vector("double", ncol(Q_lvl1)*3)
   c <- 1
+  ##c is a special function in R you don't want to overwrite
   for (i in seq_along(Q_lvl1))
   {
     for (j in seq_along(Q_lvl1))
