@@ -8,6 +8,20 @@ my_data <- as_tibble(Questionnaire_df)
 lvl1 <- my_data %>% filter(Level == "lvl1")
 lvl2 <- my_data %>% filter(Level == "lvl2")
 
+# Only returns last mean
+mean4all <- function(lvl1, lvl2) 
+{
+    mean(lvl1$SoO)
+    mean(lvl1$SoA)
+    mean(lvl1$Proprioception)
+    mean(lvl1$Frustration)
+  
+    mean(lvl2$SoO)
+    mean(lvl2$SoA)
+    mean(lvl2$Proprioception)
+    mean(lvl2$Frustration)
+}
+
 ##I wouldn't split this (keep all data in df), use the group functions (or group_by functions) for more powerful and less typing 
 ## e.g. try
 ##library(skimr)
