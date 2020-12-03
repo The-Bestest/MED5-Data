@@ -1,14 +1,14 @@
-implicit_agency <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
-mood <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
+# implicit_agency <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
+# mood <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
 Questionnaire <- read.csv(file.path(,), stringsAsFactors=FALSE)
 
-Library(ggplot2)
+library(ggplot2)
 ### IA_df not used
-IA_df <- data.frame(TI = implicit_agency$temporal_interval, prcvd = implicit_agency$prcvd_interval, IA1 = implicit_agency$IA1, IA2 = implicit_agency$IA2)
-Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, XA = Questionnaire$XA, frustration = Questionnaire$frustration, Proprioception = Questionnaire$proprioception, lvl = Questionnaire$level)
-##i would recommend merging IA and Questionnaire based on ParticipantID
-##assuming both IA_df and Questionnaire_df have that shared identifier (participantID or PID)
-##df <- merge(IA_df,Questionnaire_df)
+# IA_df <- data.frame(TI = implicit_agency$temporal_interval, prcvd = implicit_agency$prcvd_interval, IA1 = implicit_agency$IA1, IA2 = implicit_agency$IA2)
+Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, SoA = Questionnaire$SoA, Frustration = Questionnaire$Frustration, Proprioception = Questionnaire$Proprioception, Level = Questionnaire$Level)
+## i would recommend merging IA and Questionnaire based on ParticipantID
+## assuming both IA_df and Questionnaire_df have that shared identifier (participantID or PID)
+## df <- merge(IA_df,Questionnaire_df)
 
 
 Q_lvl1 <- filter(Questionnaire_df, lvl == 1)
