@@ -1,7 +1,9 @@
-implicit_agency <- read.csv(file.path(,), stringsAsFactors=FALSE)
-mood <- read.csv(file.path(,), stringsAsFactors=FALSE)
+implicit_agency <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
+mood <- read.csv(file.path(,), stringsAsFactors=FALSE) ### Not used
 Questionnaire <- read.csv(file.path(,), stringsAsFactors=FALSE)
 
+Library(ggplot2)
+### IA_df not used
 IA_df <- data.frame(TI = implicit_agency$temporal_interval, prcvd = implicit_agency$prcvd_interval, IA1 = implicit_agency$IA1, IA2 = implicit_agency$IA2)
 Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, XA = Questionnaire$XA, frustration = Questionnaire$frustration, Proprioception = Questionnaire$proprioception, lvl = Questionnaire$level)
 ##i would recommend merging IA and Questionnaire based on ParticipantID
@@ -48,24 +50,28 @@ normality_test <- function(IA1, IA2)
 
 
 #function for boxplot containing SoO, XA, Frustration, Proprioception
-boxplot <- function(SoO, XA, Frustration, Proprioception, Level)
+### This only gives a boxplot for proprioception
+### Changed wording to make it work
+boxplot <- function(SoO, SoA, Frustration, Proprioception, Level)
   {
   plot_SoO <- ggplot(subset(Questionnaire, !is.na(SoO)),aes(x = SoO, y = Level, colour = "#E69F00"))
   + geom_boxplot()
-  plot_XA <- ggplot(subset(Questionnaire, !is.na(XA)),aes(x = XA, y = Level, colour = "#56B4E9"))
+  plot_XA <- ggplot(subset(Questionnaire, !is.na(SoA)),aes(x = SoA, y = Level, colour = "#56B4E9"))
   + geom_boxplot()
   plot_Frustration <- ggplot(subset(Questionnaire, !is.na(Frustration)),aes(x = Frustration, y = Level, colour = "#009E73"))
   + geom_boxplot()
   plot_Proprioception <- ggplot(subset(Questionnaire, !is.na(Proprioception)),aes(x = Proprioception, y = Level, colour = "#F0E442"))
   + geom_boxplot()
 }
+### Use this for the boxplot function
+ChangeThisName <- boxplot(Questionnaire_df$SoO, Questionnaire_df$SoA, Questionnaire_df$Frustation, Questionnaire_df$Proprioception, Questionnaire_df$Level)
 ##more efficient to do this with a facet 
 ##let's assume all data is in df
 ##df %>% select(SoO, XA, Proprioception, Frustration,Level) %>% pivot_longer() ... need to better understand what you want to do in tems of variable names but see example below
 ##try this: you can remove each pipe symbol (and what comes after) to see how the data gets transformed through the pipe
 ##iris %>% select(Sepal.Length, Sepal.Width, Petal.Length, Species) %>% pivot_longer(!Species, values_to="val",names_to="var") %>% ggplot(aes(x = val, y = Species))+geom_boxplot()+facet_wrap(~var)
 
-
+### This might not be used at all, so didn't test
 Process_IA <- function()
 {
   IA_means <- vector("double", ncol(implicit_agency), nrow(2))
@@ -91,6 +97,8 @@ Process_IA <- function()
 }
 
 ##check out the skim command in skimr will do much more for you (see above)
+### Error in vector("double", ncol(Q_lvl1), nrow(2)) : unused argument (nrow(2))
+### Error code giving by R
 Process_questionnaire <- function()
 {
   lvl1_Q_means <- vector("double", ncol(Q_lvl1), nrow(2))
@@ -118,8 +126,11 @@ Process_questionnaire <- function()
   wilcox_frustration <- wilcox.test(Q_lvl1$frustration, Q_lvl2$frustration, paired = TRUE)
 }
 
+
 ##have a look at something like this
 ##http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+### Not enough finite observation
+### Error code giving by R
 correlation <- function()
 {
   cor_lvl1 <- vector("double", ncol(Q_lvl1)*3)
@@ -153,7 +164,7 @@ correlation <- function()
 }
 
 
-
+### No working
 scatterPlot_XA_SoO <- function(XA, Frustration, lvl)
 {
   scatter_XA_SoO <- ggplot(aes(x = XA, y = Frustration, colour = lvl)) +
