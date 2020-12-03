@@ -22,17 +22,17 @@ quick_stats <- function(level1, level2) {
 }
 
 full_stats <- function(name, level1, level2) {
-    rho <- cor.test(level1, level2, method = "spearman", exact = FALSE)
     w <- wilcox.test(level1, level2, paired = TRUE, exact = FALSE)
 
     message(name)
     print(quick_stats(level1, level2))
-    cat(sprintf("Spearman's rho: %.1f (p=%.5f)\n", rho$statistic, rho$p.value))
     cat(sprintf("Wilcoxon: %.1f (p=%.5f)\n", w$statistic, w$p.value))
     cat("\n")
 }
 
 full_stats("SoA", lvl1$SoA, lvl2$SoA)
 full_stats("SoO", lvl1$SoO, lvl2$SoO)
+rho <- cor.test(questionnaire$SoA, questionnaire$SoO, method = "spearman", exact = FALSE)
+cat(sprintf("Spearman's rho: %.1f (p=%.5f)\n", rho$statistic, rho$p.value))
 full_stats("Proprioception", lvl1$Proprioception, lvl2$Proprioception)
 full_stats("Frustration", lvl1$Frustration, lvl2$Frustration)
