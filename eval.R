@@ -1,7 +1,12 @@
 library(ggplot2)
+library(tidyverse)
 
 Questionnaire <- read.csv(file.path(,), stringsAsFactors=FALSE)
 Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, SoA = Questionnaire$SoA, Frustration = Questionnaire$Frustration, Proprioception = Questionnaire$Proprioception, Level = Questionnaire$Level)
+
+my_data <- as_tibble(Questionnaire_df)
+lvl1 <- my_data %>% filter(Level == "lvl1")
+lvl2 <- my_data %>% filter(Level == "lvl2")
 
 ##I wouldn't split this (keep all data in df), use the group functions (or group_by functions) for more powerful and less typing 
 ## e.g. try
@@ -14,7 +19,7 @@ Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, SoA = Questionnaire$SoA,
 #function for boxplot containing SoO, SoA, Frustration, Proprioception
 ### This only gives a boxplot for proprioception
 boxplot <- function(SoO, SoA, Frustration, Proprioception, Level)
-  {
+{
   plot_SoO <- ggplot(subset(Questionnaire, !is.na(SoO)),aes(x = SoO, y = Level, colour = "#E69F00"))
   + geom_boxplot()
   plot_XA <- ggplot(subset(Questionnaire, !is.na(SoA)),aes(x = SoA, y = Level, colour = "#56B4E9"))
