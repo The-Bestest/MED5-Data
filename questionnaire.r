@@ -7,8 +7,8 @@ lvl1 <- questionnaire %>% filter(Level == "lvl1")
 lvl2 <- questionnaire %>% filter(Level == "lvl2")
 
 quick_stats <- function(level1, level2) {
-    lvl1q <- quantile(lvl1$SoA)
-    lvl2q <- quantile(lvl2$SoA)
+    lvl1q <- quantile(level1)
+    lvl2q <- quantile(level2)
 
     t <- matrix(
         c(mean(level1), median(level1), sd(level1), paste(lvl1q[1], lvl1q[2], lvl1q[3], lvl1q[4], sep=";"),
