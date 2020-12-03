@@ -21,23 +21,18 @@ quick_stats <- function(level1, level2) {
     as.table(t)
 }
 
-soa <- quick_stats(lvl1$SoA, lvl2$SoA)
-soo <- quick_stats(lvl1$SoO, lvl2$SoO)
-proprioception <- quick_stats(lvl1$Proprioception, lvl2$Proprioception)
-frustration <- quick_stats(lvl1$Frustration, lvl2$Frustration)
+full_stats <- function(name, level1, level2) {
+    rho <- cor.test(level1, level2, method = "spearman", exact = FALSE)
+    w <- wilcox.test(level1, level2, paired = TRUE, exact = FALSE)
 
-message("SoA")
-soa
-cat("\n")
+    message(name)
+    print(quick_stats(level1, level2))
+    cat(sprintf("Spearman's rho: %.1f (p=%.5f)\n", rho$statistic, rho$p.value))
+    cat(sprintf("Wilcoxon: %.1f (p=%.5f)\n", w$statistic, w$p.value))
+    cat("\n")
+}
 
-message("SoO")
-soo
-cat("\n")
-
-message("Proprioception")
-proprioception
-cat("\n")
-
-message("Frustration")
-frustration
-cat("\n")
+full_stats("SoA", lvl1$SoA, lvl2$SoA)
+full_stats("SoO", lvl1$SoO, lvl2$SoO)
+full_stats("Proprioception", lvl1$Proprioception, lvl2$Proprioception)
+full_stats("Frustration", lvl1$Frustration, lvl2$Frustration)
