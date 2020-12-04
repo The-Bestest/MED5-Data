@@ -1,14 +1,11 @@
-library(ggplot2)
-library(tidyverse)
+
 source("utils/loadrawdata.R")
-mood <- as_tibble(read.csv(file.path("./","Mood .csv")))
-#cleaning up your data to make it mergeable
-mood <- mood %>%
-  pivot_longer(cols = -X, names_to = "Participant") %>%
-  mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_") %>%
-  mutate_if(is.character, stringr::str_replace_all, pattern = "P", replacement = "") %>%
-  mutate(Participant = as.numeric(Participant)) %>%
-  pivot_wider(names_from = X)
+
+
+
+
+
+
 
 # ----- importing all files and cleaning things up -------
 df <-    list.files(recursive=T,path = "./data",
@@ -17,14 +14,11 @@ df <-    list.files(recursive=T,path = "./data",
   data_frame(filename = .) %>%   
   mutate(file_contents = map(filename,~ read_csv(file.path(.),na = "NULL")))  %>% 
   unnest(cols=-filename) %>% 
-  separate(col=filename,sep="/",into=c("start","folder","Participant","Level","filename"))
+  separate(col=filename,sep="/",into=c("start","folder","Participant","Level","filename")) %>%
+  mutate(Participant=as.numeric(str_replace(Participant,"P","")))
 
 
 
-dm <-     list.files(recursive=T,path = "./data",
-                     pattern = "*Meta.csv", 
-                     full.names = T) %>% 
-  map_df(~read_csv(., col_types = cols(.default = "c"))) 
 
 # manipulating the time stamps
 
@@ -32,11 +26,9 @@ df <- df %>% mutate(vis_t_time = as.POSIXlt(vis_t_time, format = "%Y-%m-%d %H:%M
                     hoursecs = (vis_t_time$hour - df$vis_t_time[1]$hour) * 60 * 60,
                     minsecs = (vis_t_time$min - df$vis_t_time[1]$min) * 60,
                     secs = (vis_t_time$sec - df$vis_t_time[1]$sec),
-                    df$timeInSecs = hoursecs + minsecs + secs)
+                    timeInSecs = hoursecs + minsecs + secs)
 
-questionnaire <- as_tibble(read.csv(file.path("./","questionnaire.csv")))
 
-questionnaire %>% select(-Participant)%>%group_by(Level)%>%skim()
 ggplot()+ geom_smooth(method = "lm", fill = NA)
 questionnaire %>% filter (SoA>2) %>% ggplot(aes(x=SoA,y=SoO,colour=Level))+geom_jitter()+ geom_smooth(method = "lm", fill = NA)
 

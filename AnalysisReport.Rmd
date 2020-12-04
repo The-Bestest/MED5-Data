@@ -1,0 +1,99 @@
+---
+title: "AnalysisExample_HK"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(tidyverse)
+library(skimr)
+library(stringr)
+
+```
+
+## BCI - SoA and SoO project analysis
+First we need to import all data so we can connect(merge) it
+
+```{r questionnaire, echo=FALSE}
+questionnaire <- as_tibble(read.csv(file.path("./","questionnaire.csv")))
+
+#cleaning up your data to make it merge friendly
+mood <- as_tibble(read.csv(file.path("./","Mood .csv"),stringsAsFactors=FALSE)) %>% mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_")
+
+
+  #feel free to break down this long command (run it with only the first lines and see how each additional pipe %>% changes the data)
+mood <- mood %>%
+  pivot_longer(cols = -X, names_to = "Participant") %>%  
+  mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_") %>%
+  mutate_if(is.character, stringr::str_replace_all, pattern = "P", replacement = "") %>%
+  mutate(Participant = as.numeric(Participant)) %>%
+  pivot_wider(names_from = X)
+ 
+ ```
+ ```{r logData, echo=FALSE,message=F, warning=F,results='hide'}
+ 
+ #main game event data
+ df <-    list.files(recursive=TRUE ,path = "./data",
+                    pattern = "*Game.csv", 
+                    full.names = T) %>% 
+  tibble(filename = .) %>%   
+  mutate(file_contents = map(filename,~ read_csv(file.path(.),na = "NULL")))  %>% 
+  unnest(cols=-filename) %>% 
+  separate(col=filename,sep="/",into=c("start","folder","Participant","Level","filename")) %>%
+  mutate(Participant=as.numeric(str_replace(Participant,"P","")), Level=as.factor(Level))
+
+ # make timestamps more easily usable - express as seconds, set markers when input windows attempts start/end
+df <- df %>%
+  group_by(SessionID) %>%
+  mutate(
+    vis_t_time = as.POSIXlt(Timestamp, format = "%Y-%m-%d %H:%M:%OS"),
+    hoursecs = (vis_t_time$hour - vis_t_time[1]$hour) * 60 * 60,
+    minsecs = (vis_t_time$min - vis_t_time[1]$min) * 60,
+    secs = (vis_t_time$sec - vis_t_time[1]$sec),
+    timeInSecs = hoursecs + minsecs + secs,
+    GameIsOn = ifelse(Event == "GameRunning", 1, 0),
+    GameIsOn = cumsum(GameIsOn),
+    InputWindowNum = lag(ifelse(Event == "GameDecision", 1, 0)),
+    InputWindowNum = cumsum(InputWindowNum)
+  )
+ 
+
+
+```
+OK next data (code is identical apart from the file name patter)
+ ```{r logMeta Data, echo=FALSE,message=F, warning=F,results='hide'}
+  
+dm <-     list.files(recursive=T,path = "./data",
+                     pattern = "*Meta.csv", 
+                     full.names = T) %>% 
+  tibble(filename = .) %>%   
+  mutate(file_contents = map(filename,~ read_csv(file.path(.),na = "NULL")))  %>% 
+  unnest(cols=-filename)%>% 
+  separate(col=filename,sep="/",into=c("start","folder","Participant","Level","filename")) %>%
+  mutate(Participant=as.numeric(str_replace(Participant,"P","")))
+```
+Sample  data next (code is identical apart from the file name patter)
+ ```{r logSampleData, echo=FALSE,message=F, warning=F,results='hide'}
+ 
+ds <- list.files(recursive=T,path = "./data",
+              pattern = "*Sample.csv", 
+              full.names = T) %>% 
+  tibble(filename = .) %>%   
+  mutate(file_contents = map(filename,~ read_csv(file.path(.),na = "NULL")))  %>% 
+  unnest(cols=-filename)%>% 
+  separate(col=filename,sep="/",into=c("start","folder","Participant","Level","filename"))
+ 
+```
+
+## Initial analysis
+
+```{r pressure}
+questionnaire %>% select(-Participant)%>%group_by(Level)%>%skim()
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
