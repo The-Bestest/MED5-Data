@@ -57,8 +57,8 @@ df <- df %>%
     timeInSecs = hoursecs + minsecs + secs,
     GameIsOn = ifelse(Event == "GameRunning", 1, 0),
     GameIsOn = cumsum(GameIsOn),
-    InputWindowNum = lag(ifelse(Event == "GameDecision", 1, 0)),
-    InputWindowNum = cumsum(InputWindowNum)
+    InputWindowNum = lead(ifelse(Event == "GameDecision", 1, 0))#,
+    # InputWindowNum = cumsum(InputWindowNum)
   )
  
 
