@@ -48,6 +48,7 @@ mood <- mood %>%
 
  # make timestamps more easily usable - express as seconds, set markers when input windows attempts start/end
 df <- df %>%
+  select(SessionID, Participant, Event, InputNumber,InputWindow,InputWindowOrder,TrialResult)
   group_by(SessionID) %>%
   mutate(
     vis_t_time = as.POSIXlt(Timestamp, format = "%Y-%m-%d %H:%M:%OS"),
