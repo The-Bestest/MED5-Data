@@ -7,6 +7,12 @@ Questionnaire_df <- data.frame(SoO = Questionnaire$SoO, XA = Questionnaire$XA, f
 Q_lvl1 <- filter(Questionnaire_df, lvl == 1)
 Q_lvl2 <- filter(Questionnaire_df, lvl == 2)
 
+#I wouldn't split this, use the group functions (or group_by functions) for more powerful and less typing 
+# e.g. try
+#library(skimr)
+#library(tidyverse)
+#skim(Questionnaire_df)
+#Questionnaire_df %>% group_by(lvl) %>% skim() 
 
 #Function to test for normality using shapiro.test and transform the data.
 normality_test <- function(IA1, IA2)
@@ -18,7 +24,7 @@ normality_test <- function(IA1, IA2)
   shapiro_result_lvl2 <- shapiro.test(IA2)
 
   #QQ plots for IA1 and IA2
-  QQ1 <- ggplot(implicit_agency, aes(sample = IA1)) +
+  QQ1 <- ggplot(implicit_agency, aeds(sample = IA1)) +
     stat_qq() +
     stat_qq_line()
   
@@ -69,7 +75,7 @@ Process_IA <- function()
 }
 
 
-
+#check out the skim command in skimr will do much more for you
 Process_questionnaire <- function()
 {
   lvl1_Q_means <- vector("double", ncol(Q_lvl1), nrow(2))
@@ -99,10 +105,13 @@ Process_questionnaire <- function()
 
 
 
+#have a look at something like this
+#http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
 correlation <- function()
 {
   cor_lvl1 <- vector("double", ncol(Q_lvl1)*3)
   c <- 1
+  #c is a special function in R you don't want to overwrite
   for (i in seq_along(Q_lvl1))
   {
     for (j in seq_along(Q_lvl1))
