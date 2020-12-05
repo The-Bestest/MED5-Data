@@ -4,3 +4,7 @@
 .Ruserdata
 .vscode/settings.json
 .html
+.aux
+.log
+.tex
+AnalysisReport_files/
