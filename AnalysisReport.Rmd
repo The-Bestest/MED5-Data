@@ -1,8 +1,10 @@
 ---
 title: "AnalysisExample_HK"
-output: html_document
-editor_options: 
-  chunk_output_type: console
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -10,8 +12,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(ggplot2)
 library(tidyverse)
+library(tidymodels)
 library(skimr)
 library(stringr)
+library(corrplot)
+library(RColorBrewer)
+library("PerformanceAnalytics")
+library("Hmisc")
+
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+    )
+}
 
 ```
 
@@ -34,6 +51,7 @@ mood <- mood %>%
   pivot_wider(names_from = X)
  
  ```
+ 
  ```{r logData, echo=FALSE,message=F, warning=F,results='hide'}
  
  #main game event data
@@ -47,8 +65,8 @@ mood <- mood %>%
   mutate(Participant=as.numeric(str_replace(Participant,"P","")), Level=as.factor(Level))
 
  # make timestamps more easily usable - express as seconds, set markers when input windows attempts start/end
-df <- df %>%
-  select(SessionID, Participant, Event, InputNumber,InputWindow,InputWindowOrder,TrialResult)
+ df <- df %>%
+  # select(SessionID, Timestamp,Participant, Event, InputNumber,InputWindow,InputWindowOrder,TrialResult)%>%
   group_by(SessionID) %>%
   mutate(
     vis_t_time = as.POSIXlt(Timestamp, format = "%Y-%m-%d %H:%M:%OS"),
@@ -56,13 +74,29 @@ df <- df %>%
     minsecs = (vis_t_time$min - vis_t_time[1]$min) * 60,
     secs = (vis_t_time$sec - vis_t_time[1]$sec),
     timeInSecs = hoursecs + minsecs + secs,
+    vis_t_time = NULL,
+    hoursecs = NULL,
+    minsecs = NULL,
+    secs = NULL,
     GameIsOn = ifelse(Event == "GameRunning", 1, 0),
     GameIsOn = cumsum(GameIsOn),
-    InputWindowNum = lead(ifelse(Event == "GameDecision", 1, 0))#,
-    # InputWindowNum = cumsum(InputWindowNum)
-  )
+    InputWindowNum = dplyr::lag(ifelse(Event == "GameDecision", 1, 0),default=0),
+    InputWindowNum = cumsum(InputWindowNum)) %>%
+   ungroup()
  
+   
+#get times for each input windows
+df <- df %>%
+  dplyr::group_by(SessionID, InputWindowNum) %>%
+  mutate(startTime = min(timeInSecs), timeSinceIWstart = timeInSecs - startTime) %>%
+  ungroup()
 
+dfSummary <- df %>%
+  dplyr::mutate(successes=ifelse(TrialResult == "AccInput", 1, 0))%>%
+  dplyr::group_by(Participant, Level) %>%
+  # select(Participant, Level, InputWindowNum, timeSinceIWstart, TrialResult) %>%
+  dplyr::summarize(accPerc = sum(successes,na.rm = TRUE) / max(InputWindowNum), 
+                          activateDelay = mean(timeSinceIWstart,na.rm = TRUE))
 
 ```
 OK next data (code is identical apart from the file name patter)
@@ -91,10 +125,55 @@ ds <- list.files(recursive=T,path = "./data",
 ```
 
 ## Initial analysis
+```{r theBigMerge}
+dfSummary <-dfSummary %>% merge(questionnaire) %>% merge(mood) 
+dfSummary <-merge(dfSummary,questionnaire)
 
-```{r pressure}
-questionnaire %>% select(-Participant)%>%group_by(Level)%>%skim()
+dfSummary %>%
+  select(-Participant) %>%
+  group_by(Level) %>%
+  skim()
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Overview
+```{r pressure}
+questionnaire %>%
+  select(-Participant) %>%
+  group_by(Level) %>%
+  skim()
+```
+
+Correlation overview (you really need to reduce/collapse your Mood questionnaire )
+
+```{r correlationStuff}
+# check out this web page on easy summaries for correlations:
+#http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+
+chart.Correlation(dfSummary[,-c(1,2,9:21)], histogram=TRUE, pch=19)
+
+
+res2 <- Hmisc::rcorr(as.matrix(dfSummary[,-c(1,2,9:21)]))
+flattenCorrMatrix(res2$r, res2$P)
+
+corrplot(cor(dfSummary[dfSummary$Level=="lvl1",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(cor(dfSummary[dfSummary$Level=="lvl2",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+
+dfSummary %>%
+  filter(SoA > 2) %>%
+  ggplot(aes(x = SoA, y = SoO, colour = Level)) +
+  geom_jitter() +
+  geom_smooth(method = "lm", fill = NA)
+
+
+```
+```{r PredictingFrustration}
+options(pillar.sigfig = 5)
+broom::tidy(lm(Frustration~Level*(SoA+SoO+accPerc+activateDelay),data=dfSummary))
+broom::tidy(lm(Frustration~SoA+SoO+accPerc+activateDelay,data=dfSummary))
+broom::tidy(lm(Frustration~Level,data=dfSummary)) %>%mutate_if(is.numeric, round, 5)
+
+broom::tidy(lm(SoO~Level,data=dfSummary))
+
+
+```
