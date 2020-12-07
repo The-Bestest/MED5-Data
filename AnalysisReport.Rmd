@@ -38,6 +38,8 @@ First we need to import all data so we can connect(merge) it
 ```{r questionnaire, echo=FALSE}
 questionnaire <- as_tibble(read.csv(file.path("./","questionnaire.csv")))
 
+orderNumber<-rep(c(1,2,2,1),10)
+questionnaire<-cbind(questionnaire,orderNumber)
 #cleaning up your data to make it merge friendly
 mood <- as_tibble(read.csv(file.path("./","Mood .csv"),stringsAsFactors=FALSE)) %>% mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_")
 
@@ -172,7 +174,10 @@ options(pillar.sigfig = 5)
 broom::tidy(lm(Frustration~Level*(SoA+SoO+accPerc+activateDelay),data=dfSummary))
 broom::tidy(lm(Frustration~SoA+SoO+accPerc+activateDelay,data=dfSummary))
 broom::tidy(lm(Frustration~Level,data=dfSummary)) %>%mutate_if(is.numeric, round, 5)
-
+broom::tidy(lm(Frustration~Level*orderNumber,data=dfSummary))
+broom::tidy(lm(SoO~Level*orderNumber,data=dfSummary))
+broom::tidy(lm(SoA~Level*orderNumber,data=dfSummary))
+broom::tidy(lm(Proprioception~orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level,data=dfSummary))
 
 
