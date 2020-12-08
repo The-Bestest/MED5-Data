@@ -158,8 +158,8 @@ chart.Correlation(dfSummary[,-c(1,2,9:21)], histogram=TRUE, pch=19)
 res2 <- Hmisc::rcorr(as.matrix(dfSummary[,-c(1,2,9:21)]))
 flattenCorrMatrix(res2$r, res2$P)
 
-corrplot(cor(dfSummary[dfSummary$Level=="lvl1",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
-corrplot(cor(dfSummary[dfSummary$Level=="lvl2",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(cor(dfSummary[dfSummary$Level=="Body",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(cor(dfSummary[dfSummary$Level=="Blocks",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
 
 dfSummary %>%
   filter(SoA > 2) %>%
@@ -180,5 +180,16 @@ broom::tidy(lm(SoA~Level*orderNumber,data=dfSummary))
 broom::tidy(lm(Proprioception~orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level,data=dfSummary))
 
+
+
+```
+
+```{r Checking the effect of performance on SoA, SoO, Frustration and Proprioception}
+# There seems to be a small effect(-0.3724182)(S = 10664, p-value = 0.0253) on frustration using Spearsman Rho 
+cor.test(dfSummary$accPerc, dfSummary$SoA, method="spearman")
+cor.test(dfSummary$accPerc, dfSummary$SoO, method="spearman")
+cor.test(dfSummary$accPerc, dfSummary$Frustration, method="spearman")
+ggplot(dfSummary, aes(x=accPerc,y=Frustration, colour=Level)) + geom_point() + geom_smooth(method = "lm", fill = NA)
+cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 
 ```
