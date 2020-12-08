@@ -52,9 +52,9 @@ mood <- mood %>%
   mutate(Participant = as.numeric(Participant)) %>%
   pivot_wider(names_from = X)
  
- ```
+```
  
- ```{r logData, echo=FALSE,message=F, warning=F,results='hide'}
+```{r logData, echo=FALSE,message=F, warning=F,results='hide'}
  
  #main game event data
  df <-    list.files(recursive=TRUE ,path = "./data",
@@ -102,7 +102,7 @@ dfSummary <- df %>%
 
 ```
 OK next data (code is identical apart from the file name patter)
- ```{r logMeta Data, echo=FALSE,message=F, warning=F,results='hide'}
+```{r logMeta Data, echo=FALSE,message=F, warning=F,results='hide'}
   
 dm <-     list.files(recursive=T,path = "./data",
                      pattern = "*Meta.csv", 
@@ -114,7 +114,7 @@ dm <-     list.files(recursive=T,path = "./data",
   mutate(Participant=as.numeric(str_replace(Participant,"P","")))
 ```
 Sample  data next (code is identical apart from the file name patter)
- ```{r logSampleData, echo=FALSE,message=F, warning=F,results='hide'}
+```{r logSampleData, echo=FALSE,message=F, warning=F,results='hide'}
  
 ds <- list.files(recursive=T,path = "./data",
               pattern = "*Sample.csv", 
