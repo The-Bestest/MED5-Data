@@ -1,0 +1,14 @@
+
+Q1:	I look forward to work with the BCI
+Q2:	I think I can deal with the difficulties of the BCI
+Q3:	I do not think I will do well
+Q4:	I feel pressured to do well
+Q5:	BCI is a big challenge for me
+Q6:	I am very curious how I will perform
+Q7:	I dread that I can embaress myself
+Q8:	I am fully determined to give it my best
+Q9:	I don't need a reward for participating
+Q10:	It's embaressing for me to fail
+Q11:	I think everyone can control their brain activity
+Q12:	I think I won't be able to accomplish the BCI task today
+Q13:	When I do well, I will be proud of my achievement
