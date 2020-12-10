@@ -195,35 +195,33 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 ```
 
 
-```{r CounterBalacing mood test}
-participants <- dfSummary %>% filter(orderNumber == 1)
-firstgroup <- participants %>% filter(Level=="Body")
-secondgroup <- participants %>% filter(Level=="Blocks")
-
-#MoodtestData <- participants %>% select(starts_with("Q")) 
+```{r Counter-balancing mood test}
+ParticipantOrder1 <- dfSummary %>% filter(orderNumber == 1)
+Body1 <- ParticipantOrder1 %>% filter(Level=="Body")
+Blocks1 <- ParticipantOrder1 %>% filter(Level=="Blocks")
 
 # We are very sorry about this
-# wilcox.test(firstgroup$Q1, secondgroup$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q2, secondgroup$Q2, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q3, secondgroup$Q3, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q4, secondgroup$Q4, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q5, secondgroup$Q5, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q6, secondgroup$Q6, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q7, secondgroup$Q7, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q8, secondgroup$Q8, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q9, secondgroup$Q9, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q10, secondgroup$Q10, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q11, secondgroup$Q11, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q12, secondgroup$Q12, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(firstgroup$Q13, secondgroup$Q13, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q1, Blocks1$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q2, Blocks1$Q2, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q3, Blocks1$Q3, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q4, Blocks1$Q4, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q5, Blocks1$Q5, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q6, Blocks1$Q6, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q7, Blocks1$Q7, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q8, Blocks1$Q8, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q9, Blocks1$Q9, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q10, Blocks1$Q10, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q11, Blocks1$Q11, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q12, Blocks1$Q12, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(Body1$Q13, Blocks1$Q13, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 
 ```
 
-```{r CounterBalacing levels and performance}
-wilcox.test(firstgroup$accPerc, secondgroup$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-participantsOrder2 <- dfSummary %>% filter(orderNumber == 2)
-Body2 <- participantsOrder2 %>% filter(Level=="Body")
-Block2 <- participantsOrder2 %>% filter(Level=="Blocks")
+```{r Counter-balancing levels and performance}
+wilcox.test(Body1$accPerc, Blocks1$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+ParticipantOrder2 <- dfSummary %>% filter(orderNumber == 2)
+Body2 <- ParticipantOrder2 %>% filter(Level=="Body")
+Block2 <- ParticipantOrder2 %>% filter(Level=="Blocks")
 
 wilcox.test(Body2$accPerc, Block2$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 
@@ -231,16 +229,16 @@ wilcox.test(Body2$accPerc, Block2$accPerc, paired = TRUE, exact = FALSE, SIMPLIF
 
 ```{r Correlation test for SoO on all measurements}
 #Cor.test(lvl1.SoO, lvl1.SoA)
-cor.test(participants$SoO, participants$SoA, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder1$SoO, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
 #Cor.test(lvl2.SoO, lvl2.SoA)
-cor.test(participantsOrder2$SoO, participantsOrder2$SoA, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder2$SoO, ParticipantOrder2$SoA, method="spearman", exact = FALSE)
 #Cor.test(lvl1.SoO, lvl1.proprioception)
-cor.test(participants$SoO, participants$Proprioception, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Proprioception, method="spearman", exact = FALSE)
 #Cor.test(lvl2.SoO, lvl2.proprioception)
-cor.test(participantsOrder2$SoO, participantsOrder2$Proprioception, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Proprioception, method="spearman", exact = FALSE)
 #Cor.test(lvl1.SoO, lvl1.frustration)
-cor.test(participants$SoO, participants$Frustration, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Frustration, method="spearman", exact = FALSE)
 #Cor.test(lvl2.SoO, lvl2.frustration)
-cor.test(participantsOrder2$SoO, participantsOrder2$Frustration, method="spearman", exact = FALSE)
+cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman", exact = FALSE)
 
 ```
