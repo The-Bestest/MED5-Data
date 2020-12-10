@@ -202,7 +202,7 @@ secondgroup <- participants %>% filter(Level=="Blocks")
 
 #MoodtestData <- participants %>% select(starts_with("Q")) 
 
-#We are very sorry about this
+# We are very sorry about this
 # wilcox.test(firstgroup$Q1, secondgroup$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 # wilcox.test(firstgroup$Q2, secondgroup$Q2, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 # wilcox.test(firstgroup$Q3, secondgroup$Q3, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
@@ -226,5 +226,21 @@ Body2 <- participantsOrder2 %>% filter(Level=="Body")
 Block2 <- participantsOrder2 %>% filter(Level=="Blocks")
 
 wilcox.test(Body2$accPerc, Block2$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+
+```
+
+```{r Correlation test for SoO on all measurements}
+#Cor.test(lvl1.SoO, lvl1.SoA)
+cor.test(participants$SoO, participants$SoA, method="spearman", exact = FALSE)
+#Cor.test(lvl2.SoO, lvl2.SoA)
+cor.test(participantsOrder2$SoO, participantsOrder2$SoA, method="spearman", exact = FALSE)
+#Cor.test(lvl1.SoO, lvl1.proprioception)
+cor.test(participants$SoO, participants$Proprioception, method="spearman", exact = FALSE)
+#Cor.test(lvl2.SoO, lvl2.proprioception)
+cor.test(participantsOrder2$SoO, participantsOrder2$Proprioception, method="spearman", exact = FALSE)
+#Cor.test(lvl1.SoO, lvl1.frustration)
+cor.test(participants$SoO, participants$Frustration, method="spearman", exact = FALSE)
+#Cor.test(lvl2.SoO, lvl2.frustration)
+cor.test(participantsOrder2$SoO, participantsOrder2$Frustration, method="spearman", exact = FALSE)
 
 ```
