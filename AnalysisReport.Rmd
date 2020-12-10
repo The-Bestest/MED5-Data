@@ -200,6 +200,31 @@ participants <- dfSummary %>% filter(orderNumber == 1)
 firstgroup <- participants %>% filter(Level=="Body")
 secondgroup <- participants %>% filter(Level=="Blocks")
 
-MoodTest <- wilcox.test(firstgroup$Q1, secondgroup$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-}
+#MoodtestData <- participants %>% select(starts_with("Q")) 
+
+#We are very sorry about this
+# wilcox.test(firstgroup$Q1, secondgroup$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q2, secondgroup$Q2, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q3, secondgroup$Q3, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q4, secondgroup$Q4, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q5, secondgroup$Q5, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q6, secondgroup$Q6, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q7, secondgroup$Q7, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q8, secondgroup$Q8, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q9, secondgroup$Q9, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q10, secondgroup$Q10, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q11, secondgroup$Q11, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q12, secondgroup$Q12, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+# wilcox.test(firstgroup$Q13, secondgroup$Q13, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+
+```
+
+```{r CounterBalacing levels and performance}
+wilcox.test(firstgroup$accPerc, secondgroup$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+participantsOrder2 <- dfSummary %>% filter(orderNumber == 2)
+Body2 <- participantsOrder2 %>% filter(Level=="Body")
+Block2 <- participantsOrder2 %>% filter(Level=="Blocks")
+
+wilcox.test(Body2$accPerc, Block2$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
+
 ```
