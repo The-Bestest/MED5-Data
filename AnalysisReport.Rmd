@@ -199,11 +199,7 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 participants <- dfSummary %>% filter(orderNumber == 1)
 firstgroup <- participants %>% filter(Level=="Body")
 secondgroup <- participants %>% filter(Level=="Blocks")
-questionNo <- array(1:13)
-for (i in questionNo){
-  cat(print(firstgroup[9+i]))
-  firstgroup[9+i]
-  secondgroup[9+i]
- #wilcox.test(firstgroup[9+i], secondgroup[9+i], paired = FALSE, exact = FALSE)
+
+MoodTest <- wilcox.test(firstgroup$Q1, secondgroup$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 }
 ```
