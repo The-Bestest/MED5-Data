@@ -273,8 +273,10 @@ leveneTestorder2 <- leveneTest(ParticipantOrder2$accPerc,group = ParticipantOrde
 t.test(Body2$accPerc, Blocks2$accPerc)
 ```
 
-```{r Correlation test for SoO on all measurements}
+```{r Correlation test within ordernumber for SoO on all measurements}
 #non-parametric data
+#correlation test on measurement within ordernumbers
+
 #Cor.test(lvl1.SoO, lvl1.SoA)
 cor.test(ParticipantOrder1$SoO, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
 #Cor.test(lvl2.SoO, lvl2.SoA)
@@ -288,4 +290,32 @@ cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Frustration, method="spearman"
 #Cor.test(lvl2.SoO, lvl2.frustration)
 cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman", exact = FALSE)
 
+```
+
+```{r Correlation test for SoA all measurements}
+#correlation test on SoA
+cor.test(dfSummary$SoO, dfSummary$SoA, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=SoO,y=SoA, colour=Level),main = "Correlation between SoO and SoA. No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+
+#correlation test on frustration
+cor.test(dfSummary$SoO, dfSummary$Frustration, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=SoO,y=Frustration, colour=Level),main = "Correlation between SoO and Frustration. No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+
+#correlation test on Proprioception
+cor.test(dfSummary$SoO, dfSummary$Proprioception, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=SoO,y=Proprioception, colour=Level),main = "Correlation between SoO and Proprioception No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+```
+
+```{r Correlation test for SoA, Frustration and Proprioception}
+#correlation test on Frustration
+cor.test(dfSummary$SoA, dfSummary$Frustration, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=SoA,y=Frustration, colour=Level),main = "Correlation between SoA and Frustration No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+
+#correlation test on Proprioception
+cor.test(dfSummary$SoA, dfSummary$Proprioception, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=SoA,y=Proprioception, colour=Level),main = "Correlation between SoA and Proprioception No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+
+#correlation test on Proprioception and Frustration
+cor.test(dfSummary$Proprioception, dfSummary$Frustration, method="spearman", exact = FALSE)
+ggplot(dfSummary,aes(x=Proprioception,y=Frustration, colour=Level),main = "Correlation between Proprioception and Frustration No significant relation")+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 ```
