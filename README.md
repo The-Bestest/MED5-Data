@@ -4,7 +4,8 @@ For results and more explanation run `AnalysisReport.Rmd`
 
 ## Thresholds
 
-The estimates of the thresholds can be found in `thresholds.csv`.
+The estimates of the thresholds can be found in `thresholds.csv`. (analysed in https://github.com/The-Bestest/CleanVillainousPreprocessor)
+
 `StartThresholdEstimate` is the the estimation of the threshold set from the first 5 trials.
 `MainThresholdEstimate` is the estimation of the threshold from the rest of the trials.
 
