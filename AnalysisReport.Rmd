@@ -19,6 +19,7 @@ library(corrplot)
 library(RColorBrewer)
 library("PerformanceAnalytics")
 library("Hmisc")
+#library(car)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
@@ -214,21 +215,51 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 ```{r Counter-balancing levels and performance}
 #parametric data
 #Histograms 
-hist (as.numeric(Body1$accPerc), col="violet" , las =1, xlab="Body performance", main=" Performance as Percentages in Body1")
-hist (as.numeric(Blocks1$accPerc), col="blue" , las =1, xlab="Blocks performance",main=" Performance as Percentages in Blocks1")
+qplot(Body1$accPerc,
+      geom="histogram",
+      bins = 50, 
+      main = "Performance as Percentages in Body 1",
+      xlim = c(0, 1),
+      ylim = c(0, 3),
+      xlab = "Body performance")
+
+
+qplot(Blocks1$accPerc,
+      geom="histogram",
+      bins = 50,
+      xlim = c(0, 1),
+      ylim = c(0, 3),
+      main = "Performance as Percentages in Blocks 1", 
+      xlab = "Blocks performance")
+
 #ordernumber 1
 #Use ParticipantOrder1 and Body,Blocks1
 #Check for normality(Shapiro Wilks Test)
 #The data is normal if the p-value is above 0.05.
 SWTestBody1 <- shapiro.test(Body1$accPerc)
 SWTestBlocks1 <- shapiro.test(Blocks1$accPerc)
+#homogeneity of variance
+leveneTestorder1 <- leveneTest(ParticipantOrder1$accPerc,group = ParticipantOrder1$Level, center = "median", data = ParticipantOrder1)
 #T test Welch's t-test (Does not require variance check)
 t.test(Body1$accPerc, Blocks1$accPerc)
 
 #parametric data
-#Histograms 
-hist (as.numeric(Body2$accPerc), col="green" , las =1,xlab="Body performance", main=" Performance as Percentages in Body2")
-hist (as.numeric(Blocks2$accPerc), col="red" , las =1,xlab="Blocks performance", main=" Performance as Percentages in Blocks2")
+#Histograms
+qplot(Body2$accPerc,
+      geom="histogram",
+      bins = 50,
+      xlim = c(0, 1),
+      ylim = c(0, 3),
+      main = "Performance as Percentages in Body 2", 
+      xlab = "Body performance")
+
+qplot(Body2$accPerc,
+      geom="histogram",
+      bins = 50,
+      xlim = c(0, 1),
+      ylim = c(0, 3),
+      main = "Performance as Percentages in Blocks 2", 
+      xlab = "Blocks performance")
 #ordernumber 2
 ParticipantOrder2 <- dfSummary %>% filter(orderNumber == 2)
 Body2 <- ParticipantOrder2 %>% filter(Level=="Body")
@@ -236,6 +267,8 @@ Blocks2 <- ParticipantOrder2 %>% filter(Level=="Blocks")
 #Check for normality(Shapiro Wilks Test)
 SWTestBody2 <- shapiro.test(Body2$accPerc)
 SWTestBlocks2 <- shapiro.test(Blocks2$accPerc)
+#homogeneity of variance
+leveneTestorder2 <- leveneTest(ParticipantOrder2$accPerc,group = ParticipantOrder2$Level, center = "median", data = ParticipantOrder2)
 #T test Welch's t-test (Does not require variance check)
 t.test(Body2$accPerc, Blocks2$accPerc)
 ```
