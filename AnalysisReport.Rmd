@@ -20,6 +20,7 @@ library(RColorBrewer)
 library("PerformanceAnalytics")
 library("Hmisc")
 
+
 flattenCorrMatrix <- function(cormat, pmat) {
   ut <- upper.tri(cormat)
   data.frame(
@@ -196,24 +197,10 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 
 
 ```{r Counter-balancing mood test}
+#non-parametric data
  ParticipantOrder1 <- dfSummary %>% filter(orderNumber == 1)
  Body1 <- ParticipantOrder1 %>% filter(Level=="Body")
  Blocks1 <- ParticipantOrder1 %>% filter(Level=="Blocks")
-  
-# We are very sorry about this - :-) yes, that hurs ;-) and pairing is not correct iirc
-# wilcox.test(Body1$Q1, Blocks1$Q1, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q2, Blocks1$Q2, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q3, Blocks1$Q3, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q4, Blocks1$Q4, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q5, Blocks1$Q5, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q6, Blocks1$Q6, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q7, Blocks1$Q7, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q8, Blocks1$Q8, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q9, Blocks1$Q9, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q10, Blocks1$Q10, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q11, Blocks1$Q11, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q12, Blocks1$Q12, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# wilcox.test(Body1$Q13, Blocks1$Q13, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
 
  dfSummary %>%
   select(Participant, orderNumber,Level, Q1:Q13) %>%
@@ -221,23 +208,40 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
   filter(orderNumber==1) %>% 
   group_by(name) %>% 
   summarise(p=wilcox.test(value~Level,paired=FALSE,exact=FALSE)$p.value) %>%View()
-# I don't think you can pair your wilcox test because each person only contributes 1 rating for first experience
  
 ```
 
 ```{r Counter-balancing levels and performance}
-wilcox.test(Body1$accPerc, Blocks1$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-# not sure why you use wilcoxon it's a continuous variable, cand you cannot pair here either
+#parametric data
+#Histograms 
+hist (as.numeric(Body1$accPerc), col="violet" , las =1, xlab="Body performance", main=" Performance as Percentages in Body1")
+hist (as.numeric(Blocks1$accPerc), col="blue" , las =1, xlab="Blocks performance",main=" Performance as Percentages in Blocks1")
+#ordernumber 1
+#Use ParticipantOrder1 and Body,Blocks1
+#Check for normality(Shapiro Wilks Test)
+#The data is normal if the p-value is above 0.05.
+SWTestBody1 <- shapiro.test(Body1$accPerc)
+SWTestBlocks1 <- shapiro.test(Blocks1$accPerc)
+#T test Welch's t-test (Does not require variance check)
 t.test(Body1$accPerc, Blocks1$accPerc)
+
+#parametric data
+#Histograms 
+hist (as.numeric(Body2$accPerc), col="green" , las =1,xlab="Body performance", main=" Performance as Percentages in Body2")
+hist (as.numeric(Blocks2$accPerc), col="red" , las =1,xlab="Blocks performance", main=" Performance as Percentages in Blocks2")
+#ordernumber 2
 ParticipantOrder2 <- dfSummary %>% filter(orderNumber == 2)
 Body2 <- ParticipantOrder2 %>% filter(Level=="Body")
-Block2 <- ParticipantOrder2 %>% filter(Level=="Blocks")
-
-wilcox.test(Body2$accPerc, Block2$accPerc, paired = TRUE, exact = FALSE, SIMPLIFY = FALSE)
-t.test(Body2$accPerc, Block2$accPerc)
+Blocks2 <- ParticipantOrder2 %>% filter(Level=="Blocks")
+#Check for normality(Shapiro Wilks Test)
+SWTestBody2 <- shapiro.test(Body2$accPerc)
+SWTestBlocks2 <- shapiro.test(Blocks2$accPerc)
+#T test Welch's t-test (Does not require variance check)
+t.test(Body2$accPerc, Blocks2$accPerc)
 ```
 
 ```{r Correlation test for SoO on all measurements}
+#non-parametric data
 #Cor.test(lvl1.SoO, lvl1.SoA)
 cor.test(ParticipantOrder1$SoO, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
 #Cor.test(lvl2.SoO, lvl2.SoA)
