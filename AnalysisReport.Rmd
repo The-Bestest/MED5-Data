@@ -323,15 +323,15 @@ ggplot(dfSummary,aes(x=Proprioception,y=Frustration, colour=Level),main = "Corre
 ```{r Correlation test for Performance on SoO, SoA, Frustration and Proprioception}
 #correlation test on SoO
 cor.test(dfSummary$accPerc, dfSummary$SoO, method="spearman", exact = FALSE)
-ggplot(dfSummary,aes(x=SoA,y=Frustration, colour=Level))+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+ggplot(dfSummary,aes(x=accPerc,y=SoO, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 #correlation test on SoA
 cor.test(dfSummary$accPerc, dfSummary$SoA, method="spearman", exact = FALSE)
-ggplot(dfSummary,aes(x=SoA,y=Frustration, colour=Level))+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+ggplot(dfSummary,aes(x=accPerc,y=SoA, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 #correlation test on Frustration
 cor.test(dfSummary$accPerc, dfSummary$Frustration, method="spearman", exact = FALSE)
-ggplot(dfSummary,aes(x=SoA,y=Frustration, colour=Level))+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+ggplot(dfSummary,aes(x=accPerc,y=Frustration, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 #correlation test on Proprioception
 cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman", exact = FALSE)
-ggplot(dfSummary,aes(x=SoA,y=Frustration, colour=Level))+ geom_point() + expand_limits(x=c(1,7), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+ggplot(dfSummary,aes(x=accPerc,y=Proprioception, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 
 ```
