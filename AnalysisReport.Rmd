@@ -271,6 +271,10 @@ SWTestBlocks2 <- shapiro.test(Blocks2$accPerc)
 #leveneTestorder2 <- leveneTest(ParticipantOrder2$accPerc,group = ParticipantOrder2$Level, center = "median", data = ParticipantOrder2)
 #T test Welch's t-test (Does not require variance check)
 t.test(Body2$accPerc, Blocks2$accPerc)
+
+t.test(ParticipantOrder1$accPerc, ParticipantOrder2$accPerc)
+
+
 ```
 
 ```{r Correlation test within ordernumber for SoO on all measurements}
@@ -334,4 +338,13 @@ ggplot(dfSummary,aes(x=accPerc,y=Frustration, colour=Level))+ geom_point() + exp
 cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman", exact = FALSE)
 ggplot(dfSummary,aes(x=accPerc,y=Proprioception, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 
+```
+
+```{r Correlation test for Performance on Soa using orderNumber}
+#correlation test on SoA order 1
+cor.test(ParticipantOrder1$accPerc, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
+ggplot(ParticipantOrder1,aes(x=accPerc,y=SoA, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+#correlation test on SoA order 2
+cor.test(ParticipantOrder2$accPerc, ParticipantOrder2$SoA, method="spearman", exact = FALSE)
+ggplot(ParticipantOrder2,aes(x=accPerc,y=SoA, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 ```
