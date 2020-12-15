@@ -43,7 +43,7 @@ questionnaire <- as_tibble(read.csv(file.path("./","questionnaire.csv")))
 orderNumber<-rep(c(1,2,2,1),10)
 questionnaire<-cbind(questionnaire,orderNumber)
 #cleaning up your data to make it merge friendly
-mood <- as_tibble(read.csv(file.path("./","Mood .csv"),stringsAsFactors=FALSE)) %>% mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_")
+mood <- as_tibble(read.csv(file.path("./","mood.csv"),stringsAsFactors=FALSE)) %>% mutate_if(is.character, stringr::str_replace_all, pattern = " ", replacement = "_")
 
 
   #feel free to break down this long command (run it with only the first lines and see how each additional pipe %>% changes the data)
@@ -463,7 +463,10 @@ median(MAvatar$Proprioception , trim = 0, na.rm = FALSE)
 
 #Performance
   #boxplot
-PerformanceBoxplot <- ggplot(dfData, aes(accPerc, y=Level, fill=Level)) + 
+dfData$Level <- factor(dfData$Level,levels = c("Avatar", "Blocks")
+
+PerformanceBoxplot <- ggplot(dfData, aes(accPerc, y=Level, fill=Level)) +
+  geom_bar(stat = "identity") +
   coord_flip() + 
   scale_fill_manual(values=c("red","blue"))+
   ylab(label = "Level") +
