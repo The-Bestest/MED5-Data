@@ -19,7 +19,7 @@ library(corrplot)
 library(RColorBrewer)
 library("PerformanceAnalytics")
 library("Hmisc")
-#library(car)
+library(Rmisc)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
@@ -306,8 +306,8 @@ shapiro.test(dfBlocks$accPerc)
 #T test Welch's t-test (Does not require variance check)
 t.test(dfAvatar$accPerc, dfBlocks$accPerc)
 
-
 ```
+
 ```{r Correlation test within ordernumber for SoO on all measurements}
 #non-parametric data
 #correlation test on measurement within ordernumbers
@@ -327,120 +327,179 @@ cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman"
 
 ```
 
+```{r Correlation test within conditions}
+ Avatar <- dfData %>% filter(Level=="Avatar")
+ Blocks <- dfData %>% filter(Level=="Blocks")
+#cor.test for Avatar SoA and SoO
+cor.test(Avatar$SoA, Avatar$SoO ,method="spearman", exact = FALSE)
+#cor.test for Blocks SoA and SoO
+cor.test(Blocks$SoA, Blocks$SoO ,method="spearman", exact = FALSE)
+#cor.test for Avatar SoA and propriception
+cor.test(Avatar$SoA, Avatar$Proprioception ,method="spearman", exact = FALSE)
+#cor.test for Blocks SoA and proprioception
+cor.test(Blocks$SoA, Blocks$Proprioception ,method="spearman", exact = FALSE)
+#cor.test for Avatar perf. and prop.
+cor.test(Avatar$accPerc, Avatar$Proprioception ,method="spearman", exact = FALSE)
+#cor.test for Blocks perf. and prop.
+cor.test(Blocks$accPerc, Blocks$Proprioception ,method="spearman", exact = FALSE)
+```
+
 ```{r Correlation test for SoO all measurements}
 #correlation test on SoA
 cor.test(dfData$SoO, dfData$SoA, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+
+SoOSoAScatter <- ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoO") +
   ylab(label = "SoA") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on frustration
 cor.test(dfData$SoO, dfData$Frustration, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=SoO,y=Frustration, colour=Level, fill=Level))+
+SoOFruScatter <- ggplot(dfData,aes(x=SoO,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoO") +
   ylab(label = "Frustration") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on Proprioception
 cor.test(dfData$SoO, dfData$Proprioception, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=SoO,y=Proprioception, colour=Level, fill=Level))+
+SoOPropioScatter <- ggplot(dfData,aes(x=SoO,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoO") +
   ylab(label = "Proprioception") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
+#Saving Plots
+png("SoOSoAScatter.png", width = 800, height = 600)
+plot(SoOSoAScatter)
+dev.off()
+png("SoOFruScatter.png", width = 800, height = 600)
+plot(SoOFruScatter)
+dev.off()
+png("SoOPropioScatter.png", width = 800, height = 600)
+plot(SoOPropioScatter)
+dev.off
 ```
 
 ```{r Correlation test for SoA, Frustration and Proprioception}
 #correlation test on Frustration
 cor.test(dfData$SoA, dfData$Frustration, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level))+
+SoAFRuScatter <- ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoA") +
   ylab(label = "Frustration") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 
 
 #correlation test on Proprioception
 cor.test(dfData$SoA, dfData$Proprioception, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=SoA,y=Proprioception, colour=Level, fill=Level))+
+SoAPropioScatter <- ggplot(dfData,aes(x=SoA,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoA") +
   ylab(label = "Proprioception") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on Proprioception and Frustration
 cor.test(dfData$Proprioception, dfData$Frustration, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=Proprioception,y=Frustration, colour=Level, fill=Level))+ 
+ProprioFruScatter <- ggplot(dfData,aes(x=Proprioception,y=Frustration, colour=Level, fill=Level))+ 
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "Proprioception") +
   ylab(label = "Frustration") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
+#Saving Plots
+png("SoAFRuScatter.png", width = 800, height = 600)
+plot(SoAFRuScatter)
+dev.off()
+png("SoAPropioScatter.png", width = 800, height = 600)
+plot(SoAPropioScatter)
+dev.off()
+png("ProprioFruScatter.png", width = 800, height = 600)
+plot(ProprioFruScatter)
+dev.off
 ```
 
 ```{r Correlation test for Performance on SoO, SoA, Frustration and Proprioception}
 #correlation test on SoO
 cor.test(dfData$accPerc, dfData$SoO, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=accPerc,y=SoO, colour=Level, fill=Level))+
+PerfSoOScatter <- ggplot(dfData,aes(x=accPerc,y=SoO, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "Performance") +
   ylab(label = "SoO") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on SoA
 cor.test(dfData$accPerc, dfData$SoA, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=accPerc,y=SoA, colour=Level, fill=Level))+
+PerfSoAScatter <- ggplot(dfData,aes(x=accPerc,y=SoA, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "Performance") +
   ylab(label = "SoA") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 #correlation test on Frustration
 cor.test(dfData$accPerc, dfData$Frustration, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
+PerfFruScatter <- ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "Performance") +
   ylab(label = "Frustration") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 #correlation test on Proprioception
 cor.test(dfData$accPerc, dfData$Proprioception, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=accPerc,y=Proprioception, colour=Level, fill=Level))+
+PerfProprioScatter <- ggplot(dfData,aes(x=accPerc,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "Performance") +
   ylab(label = "Proprioception") +
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
-
+#Saving Plots
+png("PerfSoOScatter.png", width = 800, height = 600)
+plot(PerfSoOScatter)
+dev.off()
+png("PerfSoAScatter.png", width = 800, height = 600)
+plot(PerfSoAScatter)
+dev.off()
+png("PerfFruScatter.png", width = 800, height = 600)
+plot(PerfFruScatter)
+dev.off
+png("PerfProprioScatter.png", width = 800, height = 600)
+plot(PerfProprioScatter)
+dev.off()
 ```
 
 ```{r Correlation test for Performance on Soa using orderNumber}
@@ -468,15 +527,14 @@ PerformanceBoxplot <- ggplot(dfData, aes(accPerc, y=Level, fill=Level)) +
   scale_fill_manual(values=c("red","blue"))+
   ylab(label = "Level") +
   xlab(label = "Performance(%)") +
-  guides(fill = guide_legend(reverse=TRUE))+
-  labs(fill = "Conditions")+
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
-PerformanceBoxplot
   #Histogram
 PerformanceHisto <- ggplot(dfData,aes(accPerc, fill=Level))+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Performance") +
    ylab(label = "Fequency") +
+   labs(fill = "Conditions", colour = "Conditions")+
    geom_histogram(alpha=0.5,bins=50,position="identity")
 
 #SoO
@@ -485,6 +543,7 @@ SoOHisto <- ggplot(dfData,aes(SoO, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "SoO") +
    ylab(label = "Fequency") +
+   labs(fill = "Conditions", colour = "Conditions")+
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
 SoOBoxplot <- ggplot(dfData, aes(SoO, y=Level, fill=Level)) + 
@@ -492,6 +551,7 @@ SoOBoxplot <- ggplot(dfData, aes(SoO, y=Level, fill=Level)) +
   xlab(label = "SoO") +
   ylab(label = "Level") +
   scale_fill_manual(values=c("red","blue"))+
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
 
 #SoA
@@ -500,12 +560,14 @@ SoAHisto <- ggplot(dfData,aes(SoA, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "SoA") +
    ylab(label = "Fequency") +
+   labs(fill = "Conditions", colour = "Conditions")+
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
 SoABoxplot <- ggplot(dfData, aes(SoA, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "SoA") +
   ylab(label = "Level") +
+  labs(fill = "Conditions", colour = "Conditions")+
   scale_fill_manual(values=c("red","blue"))+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
 
@@ -515,12 +577,14 @@ FrustationHisto <- ggplot(dfData,aes(Frustration, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Frustration") +
    ylab(label = "Fequency") +
+   labs(fill = "Conditions", colour = "Conditions")+
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
 FrustationBoxplot <- ggplot(dfData, aes(Frustration, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "Frustration") +
   ylab(label = "Level") +
+  labs(fill = "Conditions", colour = "Conditions")+
   scale_fill_manual(values=c("red","blue"))+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
 
@@ -530,12 +594,14 @@ ProprioceptionHisto <- ggplot(dfData,aes(Proprioception , fill=Level),xlab=7,yla
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Proprioception ") +
    ylab(label = "Fequency") +
+   labs(fill = "Conditions", colour = "Conditions")+
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
 ProprioceptionBoxplot <- ggplot(dfData, aes(Proprioception , y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "Proprioception ") +
   ylab(label = "Level") +
+  labs(fill = "Conditions", colour = "Conditions")+
   scale_fill_manual(values=c("red","blue"))+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
 
@@ -576,21 +642,22 @@ dev.off()
 
 
 ```
+
 ```{r AV results}
 #This chunk is for all the missing data and graphs for the results sections
 #SoO + SoA
-ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+ 
+AVSoOSoAScatterplot <- ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+ 
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("#E66100","#5D3A9B")) +
   scale_fill_manual(values=c("#E66100","#5D3A9B")) +
   xlab(label = "SoO") +
   ylab(label = "SoA") +
+  labs(fill = "Conditions", colour = "Conditions")+
   theme_minimal()+
   geom_smooth(method = "lm", fill = NA)
 #performance + frustration
-cor.test(dfData$accPerc, dfData$Frustration, method="spearman", exact = FALSE)
-ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
+AVperformanceFrustrationScatterplot <- ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
   scale_color_manual(values=c("#E66100","#5D3A9B")) +
@@ -598,25 +665,42 @@ ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
   xlab(label = "Performance") +
   ylab(label = "Frustration") +
   theme_minimal()+
+  labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 #SoA + frustration
-ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level))+
+AVSoAFrustrationScatterplot <- ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("#E66100","#5D3A9B")) +
   scale_fill_manual(values=c("#E66100","#5D3A9B")) +
   xlab(label = "SoA") +
   ylab(label = "Frustration") +
+  labs(fill = "Conditions", colour = "Conditions")+
   theme_minimal()+
   geom_smooth(method = "lm", fill = NA)
 
-ggplot(dfData, aes(SoO, y=Level, fill=Level)) + 
+AVSoOBoxplot<- ggplot(dfData, aes(SoO, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "SoO") +
   ylab(label = "Level") +
+  labs(fill = "Conditions", colour = "Conditions")+
   scale_fill_manual(values=c("#E66100","#5D3A9B"))+
   theme_minimal()+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
+
+
+png("AVSoOSoAScatterplot.png", width = 800, height = 600)
+plot(AVSoOSoAScatterplot)
+dev.off()
+png("AVperformanceFrustrationScatterplot.png", width = 800, height = 600)
+plot(AVperformanceFrustrationScatterplot)
+dev.off()
+png("AVSoAFrustrationScatterplot.png", width = 800, height = 600)
+plot(AVSoAFrustrationScatterplot)
+dev.off()
+png("AVSoOBoxplot.png", width = 800, height = 600)
+plot(AVSoOBoxplot)
+dev.off()
 
 ```
 ```{r Wilconson Singed Ranked test ON SoO, SoA, Frustration and Proprioception }
@@ -626,6 +710,30 @@ wilcox.test(dfAvatar$SoO, dfBlocks$SoO, paired=TRUE,exact=FALSE)
 wilcox.test(dfAvatar$SoA, dfBlocks$SoA, paired=TRUE,exact=FALSE)
 wilcox.test(dfAvatar$Frustration, dfBlocks$Frustration, paired=TRUE,exact=FALSE)
 wilcox.test(dfAvatar$Proprioception, dfBlocks$Proprioception, paired=TRUE,exact=FALSE)
+
+
+```
+
+```{r SoO compact plot}
+
+
+gg2 <- summarySE(dfData, measurevar="SoO", groupvars =c( "Level"))
+#https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
+#gg2 has the red dots from the means it produces and the ci values used below
+
+ 
+
+SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + theme_bw() +
+  geom_jitter(data = dfData, aes(Level, SoO), width=0.2, color="black", alpha=0.5, size=1) + 
+  geom_point(position=position_dodge(0.2), size=2.5, colour="red") +
+  geom_errorbar(aes(ymin=SoO-ci, ymax=SoO+ci), width=.2, position = position_dodge(0.2), color="red") +
+  scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
+  scale_y_continuous(limits = c(1,7)) +
+  ylab("SoO Scores") + xlab("") + theme(legend.position="none")
+
+png("SoOCompactPlot.png", width = 800, height = 600)
+plot(SoOCompactPlot)
+dev.off()
 
 
 ```
