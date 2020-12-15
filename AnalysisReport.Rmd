@@ -197,7 +197,8 @@ cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
 ```
 ```{r Changing Body to avatar}
 class(dfSummary$Level)
-dfData <- dfSummary%>%mutate(Level=recode(Level, Body="Avatar"))
+dfDataTep <- dfSummary%>%mutate(Level=recode(Level, Body="Avatar"))
+dfData <- with(dfDataTep, dfDataTep[order(Level,decreasing = TRUE),])
 
  
 ```
@@ -462,14 +463,17 @@ median(MAvatar$Proprioception , trim = 0, na.rm = FALSE)
 
 #Performance
   #boxplot
-ggplot(dfData, aes(accPerc, y=Level, fill=Level)) + 
+PerformanceBoxplot <- ggplot(dfData, aes(accPerc, y=Level, fill=Level)) + 
   coord_flip() + 
   scale_fill_manual(values=c("red","blue"))+
   ylab(label = "Level") +
   xlab(label = "Performance(%)") +
+  guides(fill = guide_legend(reverse=TRUE))+
+  labs(fill = "Conditions")+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
+
   #Histogram
-ggplot(dfData,aes(accPerc, fill=Level))+
+PerformanceHisto <- ggplot(dfData,aes(accPerc, fill=Level))+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Performance") +
    ylab(label = "Fequency") +
@@ -477,13 +481,13 @@ ggplot(dfData,aes(accPerc, fill=Level))+
 
 #SoO
   #Histogram
-ggplot(dfData,aes(SoO, fill=Level),xlab=7,ylab=7)+
+SoOHisto <- ggplot(dfData,aes(SoO, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "SoO") +
    ylab(label = "Fequency") +
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
-ggplot(dfData, aes(SoO, y=Level, fill=Level)) + 
+SoOBoxplot <- ggplot(dfData, aes(SoO, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "SoO") +
   ylab(label = "Level") +
@@ -492,13 +496,13 @@ ggplot(dfData, aes(SoO, y=Level, fill=Level)) +
 
 #SoA
   #Histogram
-ggplot(dfData,aes(SoA, fill=Level),xlab=7,ylab=7)+
+SoAHisto <- ggplot(dfData,aes(SoA, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "SoA") +
    ylab(label = "Fequency") +
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
-ggplot(dfData, aes(SoA, y=Level, fill=Level)) + 
+SoABoxplot <- ggplot(dfData, aes(SoA, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "SoA") +
   ylab(label = "Level") +
@@ -507,13 +511,13 @@ ggplot(dfData, aes(SoA, y=Level, fill=Level)) +
 
 #Frustation
   #Histogram
-ggplot(dfData,aes(Frustration, fill=Level),xlab=7,ylab=7)+
+FrustationHisto <- ggplot(dfData,aes(Frustration, fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Frustration") +
    ylab(label = "Fequency") +
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
-ggplot(dfData, aes(Frustration, y=Level, fill=Level)) + 
+FrustationBoxplot <- ggplot(dfData, aes(Frustration, y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "Frustration") +
   ylab(label = "Level") +
@@ -522,18 +526,54 @@ ggplot(dfData, aes(Frustration, y=Level, fill=Level)) +
 
 #Proprioception 
   #Histogram
-ggplot(dfData,aes(Proprioception , fill=Level),xlab=7,ylab=7)+
+ProprioceptionHisto <- ggplot(dfData,aes(Proprioception , fill=Level),xlab=7,ylab=7)+
    scale_fill_manual(values=c("red","blue"))+
    xlab(label = "Proprioception ") +
    ylab(label = "Fequency") +
    geom_histogram(alpha=0.5,bins=14,position="identity")
   #boxplot
-ggplot(dfData, aes(Proprioception , y=Level, fill=Level)) + 
+ProprioceptionBoxplot <- ggplot(dfData, aes(Proprioception , y=Level, fill=Level)) + 
   coord_flip() + 
   xlab(label = "Proprioception ") +
   ylab(label = "Level") +
   scale_fill_manual(values=c("red","blue"))+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
+
+# #save plots (Does not work yet)
+
+# vector1 <- c(PerformanceBoxplot,PerformanceHisto,SoOHisto)
+
+# for ( i in seq_along(vector1)) {
+#   png(i+".png", width = 800, height = 600)
+#   plot(i)
+#   dev.off() 
+# }
+
+# png("PerformanceBoxplot.png", width = 800, height = 600)
+# plot(PerformanceBoxplot)
+# dev.off()
+# png("PerformanceHisto.png", width = 800, height = 600)
+# plot(PerformanceHisto)
+# dev.off()
+# png("SoOHisto.png", width = 800, height = 600)
+# plot(SoOHisto)
+# dev.off()
+# png("SoOBoxplot.png", width = 800, height = 600)
+# plot(SoOBoxplot)
+# dev.off()
+# png("SoAHisto.png", width = 800, height = 600)
+# plot(SoAHisto)
+# dev.off()
+# png("SoABoxplot.png", width = 800, height = 600)
+# plot(SoOBoxplot)
+# dev.off()
+# png("FrustationHsto.png", width = 800, height = 600)
+# plot(FrustationHisto)
+# dev.off()
+# png("FrustationBoxplot.png", width = 800, height = 600)
+# plot(FrustationBoxplot)
+# dev.off()
+
 
 ```
 ```{r AV results}
@@ -589,3 +629,5 @@ wilcox.test(dfAvatar$Proprioception, dfBlocks$Proprioception, paired=TRUE,exact=
 
 
 ```
+
+
