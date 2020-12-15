@@ -471,7 +471,7 @@ PerformanceBoxplot <- ggplot(dfData, aes(accPerc, y=Level, fill=Level)) +
   guides(fill = guide_legend(reverse=TRUE))+
   labs(fill = "Conditions")+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
-
+PerformanceBoxplot
   #Histogram
 PerformanceHisto <- ggplot(dfData,aes(accPerc, fill=Level))+
    scale_fill_manual(values=c("red","blue"))+
@@ -539,40 +539,40 @@ ProprioceptionBoxplot <- ggplot(dfData, aes(Proprioception , y=Level, fill=Level
   scale_fill_manual(values=c("red","blue"))+
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=4, alpha=0.5)
 
-# #save plots (Does not work yet)
+ #save plots (Does not work yet)
 
-# vector1 <- c(PerformanceBoxplot,PerformanceHisto,SoOHisto)
+ # vector1 <- c(PerformanceBoxplot,PerformanceHisto,SoOHisto)
+ # 
+ # for ( i in seq_along(vector1)) {
+ #   png(i+".png", width = 800, height = 600)
+ #   plot(i)
+ #   dev.off()
+ # }
 
-# for ( i in seq_along(vector1)) {
-#   png(i+".png", width = 800, height = 600)
-#   plot(i)
-#   dev.off() 
-# }
-
-# png("PerformanceBoxplot.png", width = 800, height = 600)
-# plot(PerformanceBoxplot)
-# dev.off()
-# png("PerformanceHisto.png", width = 800, height = 600)
-# plot(PerformanceHisto)
-# dev.off()
-# png("SoOHisto.png", width = 800, height = 600)
-# plot(SoOHisto)
-# dev.off()
-# png("SoOBoxplot.png", width = 800, height = 600)
-# plot(SoOBoxplot)
-# dev.off()
-# png("SoAHisto.png", width = 800, height = 600)
-# plot(SoAHisto)
-# dev.off()
-# png("SoABoxplot.png", width = 800, height = 600)
-# plot(SoOBoxplot)
-# dev.off()
-# png("FrustationHsto.png", width = 800, height = 600)
-# plot(FrustationHisto)
-# dev.off()
-# png("FrustationBoxplot.png", width = 800, height = 600)
-# plot(FrustationBoxplot)
-# dev.off()
+png("PerformanceBoxplot.png", width = 800, height = 600)
+plot(PerformanceBoxplot)
+dev.off()
+png("PerformanceHisto.png", width = 800, height = 600)
+plot(PerformanceHisto)
+dev.off()
+png("SoOHisto.png", width = 800, height = 600)
+plot(SoOHisto)
+dev.off()
+png("SoOBoxplot.png", width = 800, height = 600)
+plot(SoOBoxplot)
+dev.off()
+png("SoAHisto.png", width = 800, height = 600)
+plot(SoAHisto)
+dev.off()
+png("SoABoxplot.png", width = 800, height = 600)
+plot(SoOBoxplot)
+dev.off()
+png("FrustationHsto.png", width = 800, height = 600)
+plot(FrustationHisto)
+dev.off()
+png("FrustationBoxplot.png", width = 800, height = 600)
+plot(FrustationBoxplot)
+dev.off()
 
 
 ```
