@@ -348,13 +348,14 @@ cor.test(Blocks$accPerc, Blocks$Proprioception ,method="spearman", exact = FALSE
 #correlation test on SoA
 cor.test(dfData$SoO, dfData$SoA, method="spearman", exact = FALSE)
 SoOSoAScatter <- ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+
-  geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
+  geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 5) +
   expand_limits(x=c(1,7), y=c(1, 7))+
   scale_color_manual(values=c("red","blue")) +
   scale_fill_manual(values=c("red","blue")) +
   xlab(label = "SoO") +
   ylab(label = "SoA") +
   labs(fill = "Conditions", colour = "Conditions")+
+  theme_bw(base_size = 25)+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on frustration
@@ -723,10 +724,10 @@ gg2 <- summarySE(dfData, measurevar="SoO", groupvars =c( "Level"))
 
  
 
-SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + theme_bw() +
-  geom_jitter(data = dfData, aes(Level, SoO), width=0.2, color="black", alpha=0.5, size=1) + 
-  geom_point(position=position_dodge(0.2), size=2.5, colour="red") +
-  geom_errorbar(aes(ymin=SoO-ci, ymax=SoO+ci), width=.2, position = position_dodge(0.2), color="red") +
+SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + theme_bw(base_size = 25) +
+  geom_jitter(data = dfData, aes(Level, SoO), width=0.2, color="black", alpha=0.5, size=3) + 
+  geom_point(position=position_dodge(0.2), size=4, colour="red") +
+  geom_errorbar(aes(ymin=SoO-ci, ymax=SoO+ci), width=.4, position = position_dodge(0.2), color=c("red", "blue")) +
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
   scale_y_continuous(limits = c(1,7)) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
@@ -737,5 +738,7 @@ dev.off()
 
 
 ```
+
+
 
 
