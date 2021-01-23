@@ -1,49 +1,35 @@
 # MED5-Data
 
-## Results
+For results and more explanation run `AnalysisReport.Rmd`
 
-```
-SoA
-       Mean Median SD                Quantiles
-Body   5.4  6      1.42902248518275  1;5;6;6  
-Blocks 5.65 6      0.875093979915421 4;5;6;6  
-Spearman's rho: 776.2 (p=0.06784)
-Wilcoxon: 39.5 (p=0.68514)
+## Sanity check
 
-SoO
-       Mean Median SD               Quantiles 
-Body   4.7  5      1.45457535854428 2;4;5;6   
-Blocks 2.6  3      1.27320565172283 1;1.75;3;3
-Spearman's rho: 474.0 (p=0.00220)
-Wilcoxon: 171.0 (p=0.00017)
+    P3      Body: 30(6 fails)       Blocks:  30(6 fails)
+    P4      Body: 30(11 fails)      Blocks:  30(13 fails)
+    P5      Body: 30(11 fails)      Blocks:  30(8 fails)
+    P6      Body: 30(13 fails)      Blocks:  30(11 fails)
+    P7      Body: 30(1 fails)       Blocks:  14(0 fails)
+    P8      Body: 30(4 fails)       Blocks:  30(1 fails)
+    P9      Body: 30(7 fails)       Blocks:  30(6 fails)
+    P10     Body: 30(5 fails)       Blocks:  30(14 fails)
+    P11     Body: 30(10 fails)      Blocks:  30(10 fails)
+    P12     Body: 30(10 fails)      Blocks:  30(8 fails)
+    P13     Body: 30(4 fails)       Blocks:  30(1 fails)
+    P14     Body: 30(10 fails)      Blocks:  30(10 fails)
+    P15     Body: 30(1 fails)       Blocks:  30(1 fails)
+    P16     Body: 30(6 fails)       Blocks:  30(1 fails)
+    P17     Body: 30(2 fails)       Blocks:  30(4 fails)
+    P18     Body: 30(1 fails)       Blocks:  30(10 fails)
+    P19     Body: 30(1 fails)       Blocks:  30(4 fails)
+    P20     Body: 30(2 fails)       Blocks:  30(5 fails)
 
-Proprioception
-       Mean Median SD               Quantiles 
-Body   3.3  3      2.05452004896008 1;2;3;4.25
-Blocks 1.95 1.5    1.19097483291276 1;1;1.5;3 
-Spearman's rho: 873.0 (p=0.13800)
-Wilcoxon: 108.0 (p=0.00623)
+## Thresholds
 
-Frustration
-       Mean Median SD               Quantiles   
-Body   3.85 4      1.53125335660212 1;3;4;5     
-Blocks 3.65 3.5    1.13670808176853 2;3;3.5;4.25
-Spearman's rho: 1150.8 (p=0.57111)
-Wilcoxon: 50.5 (p=0.74904)
-```
+The estimates of the thresholds can be found in `thresholds.csv`. (analysed in https://github.com/The-Bestest/CleanVillainousPreprocessor)
 
-## Setup
+`StartThresholdEstimate` is the the estimation of the threshold set from the first 5 trials.
+`MainThresholdEstimate` is the estimation of the threshold from the rest of the trials.
 
-Install dependencies:
+If `StartThresholdEstimate` and `MainThresholdEstimate` are significantly different, it means the threshold has been manipulated to keep the participant's performance high. This is usually true for participant's first level (`Body` for odd-numbered participants and `Blocks` for even-numbered ones)..
 
-```
-install.packages("ggplot2", "tidyverse")
-```
-
-## Run
-
-Run `questionnaire.r` to analyse data from `questionnaire.csv` inside the root folder of this repository.
-
-```
-Rscript questionnaire.r
-```
+In some cases `StartThresholdEstimate` and `MainThresholdEstimate` are the same or very close - this means no threshold correction was made during the trial. This is usually true for the particpant's second level (`Blocks` for odd-numbered participants and `Body` for even-numbered ones).
