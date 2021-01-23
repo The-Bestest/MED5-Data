@@ -181,4 +181,8 @@ broom::tidy(lm(Proprioception~orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level,data=dfSummary))
 
 
+broom::tidy(lm(SoO~SoA*Level,data=dfSummary)) %>% mutate_if(is.numeric, round, 5)
+options(scipen = 999)
+broom::tidy(lm(SoA~accPerc*Level*orderNumber,data=dfSummary)) %>% mutate_if(is.numeric, round, 5)
+options(digits = 3, scipen = -2)
 ```
