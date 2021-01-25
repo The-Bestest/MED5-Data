@@ -20,6 +20,7 @@ library(RColorBrewer)
 library("PerformanceAnalytics")
 library("Hmisc")
 library(Rmisc)
+library(lubridate)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
@@ -70,30 +71,27 @@ mood <- mood %>%
 
  # make timestamps more easily usable - express as seconds, set markers when input windows attempts start/end
  df <- df %>%
-  # select(SessionID, Timestamp,Participant, Event, InputNumber,InputWindow,InputWindowOrder,TrialResult)%>%
-  group_by(SessionID) %>%
-  mutate(
+  dplyr::group_by(Participant, Level) %>%
+   mutate(
     vis_t_time = as.POSIXlt(Timestamp, format = "%Y-%m-%d %H:%M:%OS"),
-    hoursecs = (vis_t_time$hour - vis_t_time[1]$hour) * 60 * 60,
-    minsecs = (vis_t_time$min - vis_t_time[1]$min) * 60,
-    secs = (vis_t_time$sec - vis_t_time[1]$sec),
-    timeInSecs = hoursecs + minsecs + secs,
-    vis_t_time = NULL,
-    hoursecs = NULL,
-    minsecs = NULL,
-    secs = NULL,
+    timeInSecs = seconds(vis_t_time),
     GameIsOn = ifelse(Event == "GameRunning", 1, 0),
-    GameIsOn = cumsum(GameIsOn),
-    InputWindowNum = dplyr::lag(ifelse(Event == "GameDecision", 1, 0),default=0),
-    InputWindowNum = cumsum(InputWindowNum)) %>%
-   ungroup()
+    GameIsOn = cumsum(GameIsOn)) %>%
+    arrange(Participant,Level,timeInSecs) %>%
+    dplyr::mutate(InputWindowNum = dplyr::lag(ifelse(Event == "GameDecision", 1, 0),default=0)) %>%
+    dplyr::mutate(InputWindowNum = cumsum(InputWindowNum)) %>%
+    ungroup()
  
+ # df<- df  %>% group_by(Participant, Level) %>% dplyr::summarise(StartTime=min(timeInSecs)) %>% dplyr::right_join(df)
    
 #get times for each input windows
 df <- df %>%
-  dplyr::group_by(SessionID, InputWindowNum) %>%
-  mutate(startTime = min(timeInSecs), timeSinceIWstart = timeInSecs - startTime) %>%
-  ungroup()
+  select(Participant, Level, InputWindowNum,timeInSecs) %>%
+  dplyr::group_by(Participant, Level, InputWindowNum) %>%
+  dplyr::summarise(startTime = min(timeInSecs)) %>%
+  right_join(df) %>%
+  mutate(timeSinceIWstart = ifelse(TrialResult == "AccInput",timeInSecs - startTime,NA))
+  
 
 dfSummary <- df %>%
   dplyr::mutate(successes=ifelse(TrialResult == "AccInput", 1, 0))%>%
@@ -741,8 +739,6 @@ png("SoOCompactPlot.png", width = 800, height = 600)
 plot(SoOCompactPlot)
 dev.off()
 
-
->>>>>>> a7f87f4f1269e57b640e2166857fce3a9eddbc81
 ```
 
 ```{r SoA compact plot}
