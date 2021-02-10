@@ -21,6 +21,7 @@ library("PerformanceAnalytics")
 library("Hmisc")
 library(Rmisc)
 library(lubridate)
+library(ggbeeswarm)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
@@ -719,20 +720,22 @@ wilcox.test(dfAvatar$Proprioception, dfBlocks$Proprioception, paired=TRUE,exact=
 ```
 
 ```{r SoO compact plot}
-
-
+ID <- 1:7
 gg2 <- summarySE(dfData, measurevar="SoO", groupvars =c( "Level"))
 #https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
 #gg2 has the red dots from the means it produces and the ci values used below
 
- 
+#geom_beeswarm(SoO ~ Level, data= dfData)
 
-SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + theme_bw(base_size = 25) +
-  geom_jitter(data = dfData, aes(Level, SoO), width=0.2, color="black", alpha=0.5, size=3) + 
-  geom_point(position=position_dodge(0.2), size=4, colour="red") +
+SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + 
+  #theme(axis.text.x=element_text(size = 25), axis.text.y=element_text(size = 20), 
+  #axis.title=element_text(size = 25)) +
+  theme_bw(base_size = 30) +
+  geom_beeswarm(data = dfData, priority='density',cex=3, color="#454545", aes(size=3, stroke=1)) +
+  geom_point(size=5,color=c("red", "blue"), alpha=0.7) +
   geom_errorbar(aes(ymin=SoO-ci, ymax=SoO+ci), width=.4, position = position_dodge(0.2), color=c("red", "blue")) +
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
-  scale_y_continuous(limits = c(1,7)) +
+  scale_y_continuous("SoO", labels = as.character(ID), breaks = ID) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
 
 png("SoOCompactPlot.png", width = 800, height = 600)
@@ -750,7 +753,8 @@ gg2 <- summarySE(dfData, measurevar="SoA", groupvars =c( "Level"))
 
  
 
-SoACompactPlot <- ggplot(gg2, aes(Level, SoA, colour=Level)) + theme_bw(base_size = 25) +
+SoACompactPlot <- ggplot(gg2, aes(Level, SoA, colour=Level)) + 
+  theme_bw(base_size = 25) +
   geom_jitter(data = dfData, aes(Level, SoA), width=0.2, color="black", alpha=0.5, size=3) + 
   geom_point(position=position_dodge(0.2), size=4, colour="red") +
   geom_errorbar(aes(ymin=SoA-ci, ymax=SoA+ci), width=.4, position = position_dodge(0.2), color=c("red", "blue")) +
