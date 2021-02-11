@@ -728,12 +728,13 @@ gg2 <- summarySE(dfData, measurevar="SoO", groupvars =c( "Level"))
 #geom_beeswarm(SoO ~ Level, data= dfData)
 
 SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + 
-  #theme(axis.text.x=element_text(size = 25), axis.text.y=element_text(size = 20), 
-  #axis.title=element_text(size = 25)) +
+  # theme(axis.text.x=element_text(size = 25), axis.text.y=element_text(size = 20), 
+  # axis.title=element_text(size = 25)) +
   theme_bw(base_size = 30) +
-  geom_beeswarm(data = dfData, priority='density',cex=3, color="#454545", aes(size=3, stroke=1)) +
-  geom_point(size=5,color=c("red", "blue"), alpha=0.7) +
-  geom_errorbar(aes(ymin=SoO-ci, ymax=SoO+ci), width=.4, position = position_dodge(0.2), color=c("red", "blue")) +
+  geom_boxplot(aes(lower = SoO - ci, upper = SoO + ci, middle = SoO, ymin = SoO - 3*ci, ymax = SoO + 3*ci),
+    stat = "identity", color="#454545", width=.5, alpha=0) +
+  #geom_segment()+ https://stackoverflow.com/questions/30002257/change-color-median-line-ggplot-geom-boxplot
+  geom_beeswarm(data = dfData, priority='density',cex=3, color="black", aes(size=3, stroke=1)) +
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
   scale_y_continuous("SoO", labels = as.character(ID), breaks = ID) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
