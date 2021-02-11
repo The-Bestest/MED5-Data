@@ -22,6 +22,8 @@ library("Hmisc")
 library(Rmisc)
 library(lubridate)
 library(ggbeeswarm)
+library(GGally)
+library(effsize)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
@@ -161,6 +163,7 @@ flattenCorrMatrix(res2$r, res2$P)
 
 corrplot(cor(dfSummary[dfSummary$Level=="Body",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
 corrplot(cor(dfSummary[dfSummary$Level=="Blocks",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+ggparcoord(dfSummary)
 
 dfSummary %>%
   filter(SoA > 2) %>%
@@ -204,7 +207,11 @@ class(dfSummary$Level)
 dfDataTep <- dfSummary%>%mutate(Level=recode(Level, Body="Avatar"))
 dfData <- with(dfDataTep, dfDataTep[order(Level,decreasing = TRUE),])
 
- 
+ dfSummary %<>% mutate(SoOHigh=ifelse(SoO)) 
+
+#effect size of Hand/block
+cliff.delta(dfSummary[dfSummary$Level=='Body',]$SoO,dfSummary[dfSummary$Level=='Blocks',]$SoO,return.dm=TRUE)
+
 ```
 
 ```{r Counter-balancing mood test}
