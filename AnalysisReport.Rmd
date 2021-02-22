@@ -207,7 +207,7 @@ class(dfSummary$Level)
 dfDataTep <- dfSummary%>%mutate(Level=recode(Level, Body="Avatar"))
 dfData <- with(dfDataTep, dfDataTep[order(Level,decreasing = TRUE),])
 
- dfSummary %<>% mutate(SoOHigh=ifelse(SoO)) 
+# dfSummary <- dfSummary %>% mutate(SoOHigh=ifelse(SoO > 3.5, TRUE, FALSE)) # This is a TODO, 3.5 was chosen arbitrarily
 
 #effect size of Hand/block
 cliff.delta(dfSummary[dfSummary$Level=='Body',]$SoO,dfSummary[dfSummary$Level=='Blocks',]$SoO,return.dm=TRUE)
