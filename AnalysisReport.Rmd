@@ -193,6 +193,11 @@ options(digits = 3, scipen = -2)
 
 ```
 
+```{r PredictingSoA}
+broom::tidy(lm(SoA~SoO,data=dfSummary[dfSummary$Level=='Body',]))
+broom::tidy(lm(SoA~SoO,data=dfSummary[dfSummary$Level=='Blocks',]))
+```
+
 ```{r Checking the effect of performance on SoA, SoO, Frustration and Proprioception}
 # There seems to be a small effect(-0.3724182)(S = 10664, p-value = 0.0253) on frustration using Spearsman Rho 
 cor.test(dfSummary$accPerc, dfSummary$SoA, method="spearman")
