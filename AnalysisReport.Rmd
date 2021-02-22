@@ -751,6 +751,9 @@ SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) +
   scale_y_continuous("SoO", labels = as.character(ID), breaks = ID) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
 
+SoOBuildData <- ggplot_build(SoOCompactPlot)$data[[1]]
+SoOCompactPlot <- SoOCompactPlot + geom_segment(data=SoOBuildData, aes(x=xmin, xend=xmax, y=middle, yend=middle), colour="red", size=2)
+
 png("SoOCompactPlot.png", width = 800, height = 600)
 plot(SoOCompactPlot)
 dev.off()
