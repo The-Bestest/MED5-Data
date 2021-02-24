@@ -734,24 +734,18 @@ wilcox.test(dfAvatar$Proprioception, dfBlocks$Proprioception, paired=TRUE,exact=
 ```{r SoO compact plot}
 ID <- 1:7
 gg2 <- summarySE(dfData, measurevar="SoO", groupvars =c( "Level"))
-#https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
-#gg2 has the red dots from the means it produces and the ci values used below
-
-#geom_beeswarm(SoO ~ Level, data= dfData)
 
 SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) + 
-  # theme(axis.text.x=element_text(size = 25), axis.text.y=element_text(size = 20), 
-  # axis.title=element_text(size = 25)) +
   theme_classic(base_size = 30) +
   geom_boxplot(aes(lower = SoO - ci, upper = SoO + ci, middle = SoO, ymin = SoO - 3*ci, ymax = SoO + 3*ci),
     stat = "identity", color="#454545", width=.5, alpha=0) +
-  #geom_segment()+ https://stackoverflow.com/questions/30002257/change-color-median-line-ggplot-geom-boxplot
   geom_beeswarm(data = dfData, priority='density',cex=3, color="gray", aes(size=3, stroke=1)) +
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
-  scale_y_continuous("SoO", labels = as.character(ID), breaks = ID) +
+  scale_y_continuous("ownership", limits=c(1, 7.5), labels = as.character(ID), breaks = ID) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
 
 SoOBuildData <- ggplot_build(SoOCompactPlot)$data[[1]]
+# Add red mean median lines
 SoOCompactPlot <- SoOCompactPlot + geom_segment(data=SoOBuildData, aes(x=xmin, xend=xmax, y=middle, yend=middle), colour="red", size=2)
 
 png("SoOCompactPlot.png", width = 800, height = 600)
@@ -761,22 +755,20 @@ dev.off()
 ```
 
 ```{r SoA compact plot}
-
-
 gg2 <- summarySE(dfData, measurevar="SoA", groupvars =c( "Level"))
-#https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
-#gg2 has the red dots from the means it produces and the ci values used below
-
- 
 
 SoACompactPlot <- ggplot(gg2, aes(Level, SoA, colour=Level)) + 
-  theme_bw(base_size = 25) +
-  geom_jitter(data = dfData, aes(Level, SoA), width=0.2, color="black", alpha=0.5, size=3) + 
-  geom_point(position=position_dodge(0.2), size=4, colour="red") +
-  geom_errorbar(aes(ymin=SoA-ci, ymax=SoA+ci), width=.4, position = position_dodge(0.2), color=c("red", "blue")) +
+  theme_classic(base_size = 30) +
+  geom_boxplot(aes(lower = SoA - ci, upper = SoA + ci, middle = SoA, ymin = SoA - 3*ci, ymax = SoA + 3*ci),
+    stat = "identity", color="#454545", width=.5, alpha=0) +
+  geom_beeswarm(data = dfData, priority='density',cex=3, color="gray", aes(size=3, stroke=1)) +
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
-  scale_y_continuous(limits = c(1,7)) +
+  scale_y_continuous("agency", limits=c(1, 7.5), labels = as.character(ID), breaks = ID) +
   ylab("SoA Scores") + xlab("") + theme(legend.position="none")
+
+SoABuildData <- ggplot_build(SoACompactPlot)$data[[1]]
+# Add red mean median lines
+SoACompactPlot <- SoACompactPlot + geom_segment(data=SoABuildData, aes(x=xmin, xend=xmax, y=middle, yend=middle), colour="red", size=2)
 
 png("SoACompactPlot.png", width = 800, height = 600)
 plot(SoACompactPlot)
@@ -786,14 +778,7 @@ dev.off()
 ```
 
 ```{r AccPerc compact plot}
-
-
 gg2 <- summarySE(dfData, measurevar="accPerc", groupvars =c( "Level"))
-#https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
-#gg2 has the red dots from the means it produces and the ci values used below
-
- 
-
 accPercCompactPlot <- ggplot(gg2, aes(Level, accPerc, colour=Level)) + theme_bw(base_size = 25) +
   geom_jitter(data = dfData, aes(Level, accPerc), width=0.2, color="black", alpha=0.5, size=3) + 
   geom_point(position=position_dodge(0.2), size=4, colour="red") +
