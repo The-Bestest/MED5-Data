@@ -24,6 +24,7 @@ library(lubridate)
 library(ggbeeswarm)
 library(GGally)
 library(effsize)
+library(magrittr)
 
 
 flattenCorrMatrix <- function(cormat, pmat) {
