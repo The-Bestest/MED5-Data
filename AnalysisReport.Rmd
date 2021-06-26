@@ -9,7 +9,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+options(scipen=999)
 library(ggplot2)
 library(tidyverse)
 library(tidymodels)
@@ -140,6 +140,15 @@ dfSummary %>%
   group_by(Level) %>%
   skim()
 
+dfMainVarsSummary <- dfSummary %>%
+  select(Level:accPerc) %>%
+  pivot_longer(cols = -Level, names_to = "measure", values_to = "val") %>%
+  dplyr::group_by(Level, measure) %>%
+  dplyr::summarize(mean = round(mean(val),1),
+                   sd=round(sd(val),1)) %>%
+  filter(!(measure=="orderNumber")) %>%
+  pivot_wider(names_from = measure, values_from = c(mean,sd))
+
 ```
 
 Overview
@@ -162,8 +171,8 @@ chart.Correlation(dfSummary[,-c(1,2,9:21)], histogram=TRUE, pch=19)
 res2 <- Hmisc::rcorr(as.matrix(dfSummary[,-c(1,2,9:21)]))
 flattenCorrMatrix(res2$r, res2$P)
 
-corrplot(cor(dfSummary[dfSummary$Level=="Body",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
-corrplot(cor(dfSummary[dfSummary$Level=="Blocks",-c(1,2,9:21)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(cor(dfSummary[dfSummary$Level=="Body",-c(1,2)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(cor(dfSummary[dfSummary$Level=="Blocks",-c(1,2)]), type="upper",col=brewer.pal(n=8, name="RdYlBu"))
 ggparcoord(dfSummary)
 
 dfSummary %>%
@@ -182,6 +191,7 @@ broom::tidy(lm(Frustration~Level,data=dfSummary)) %>%mutate_if(is.numeric, round
 broom::tidy(lm(Frustration~Level*orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level*orderNumber,data=dfSummary))
 broom::tidy(lm(SoA~Level*orderNumber,data=dfSummary))
+broom::tidy(lm(SoA~Level*accPerc,data=dfSummary))
 broom::tidy(lm(Proprioception~orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level,data=dfSummary))
 
@@ -197,16 +207,25 @@ options(digits = 3, scipen = -2)
 ```{r PredictingSoA}
 broom::tidy(lm(SoA~SoO,data=dfSummary[dfSummary$Level=='Body',]))
 broom::tidy(lm(SoA~SoO,data=dfSummary[dfSummary$Level=='Blocks',]))
+broom::tidy(lm(SoA~SoO*Level,data=dfSummary))
+
 ```
 
 ```{r Checking the effect of performance on SoA, SoO, Frustration and Proprioception}
 # There seems to be a small effect(-0.3724182)(S = 10664, p-value = 0.0253) on frustration using Spearsman Rho 
-cor.test(dfSummary$accPerc, dfSummary$SoA, method="spearman")
-cor.test(dfSummary$accPerc, dfSummary$SoO, method="spearman")
-cor.test(dfSummary$accPerc, dfSummary$Frustration, method="spearman")
-ggplot(dfSummary, aes(x=accPerc,y=Frustration, colour=Level)) + geom_point() + geom_smooth(method = "lm", fill = NA)
-cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman")
+tidy(cor.test(dfSummary$accPerc, dfSummary$SoA, method="spearman"))
 
+tidy(cor.test(dfSummary$accPerc, dfSummary$SoO, method="spearman"))
+tidy(cor.test(dfSummary$accPerc, dfSummary$Frustration, method="spearman"))
+ggplot(dfSummary, aes(x=accPerc,y=Frustration, colour=Level)) + geom_point() + geom_smooth(method = "lm", fill = NA)
+tidy(cor.test(dfSummary$accPerc, dfSummary$Proprioception, method="spearman"))
+
+dfSummary %>% 
+  group_by(Level) %>%
+  do(tidy(cor.test(.$accPerc, .$SoA)))
+
+tidy(lm(SoA~Level*accPerc,data=dfSummary))
+plot(dfSummary$accPerc,dfSummary$SoA)
 ```
 ```{r Changing Body to avatar}
 class(dfSummary$Level)
@@ -329,18 +348,18 @@ t.test(dfAvatar$accPerc, dfBlocks$accPerc)
 #non-parametric data
 #correlation test on measurement within ordernumbers
 
-#Cor.test(lvl1.SoO, lvl1.SoA)
-cor.test(ParticipantOrder1$SoO, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
-#Cor.test(lvl2.SoO, lvl2.SoA)
-cor.test(ParticipantOrder2$SoO, ParticipantOrder2$SoA, method="spearman", exact = FALSE)
-#Cor.test(lvl1.SoO, lvl1.proprioception)
-cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Proprioception, method="spearman", exact = FALSE)
-#Cor.test(lvl2.SoO, lvl2.proprioception)
-cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Proprioception, method="spearman", exact = FALSE)
-#Cor.test(lvl1.SoO, lvl1.frustration)
-cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Frustration, method="spearman", exact = FALSE)
-#Cor.test(lvl2.SoO, lvl2.frustration)
-cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman", exact = FALSE)
+#tidy(cor.test(lvl1.SoO, lvl1.SoA)
+tidy(cor.test(ParticipantOrder1$SoO, ParticipantOrder1$SoA, method="spearman", exact = FALSE))
+#tidy(cor.test(lvl2.SoO, lvl2.SoA)
+tidy(cor.test(ParticipantOrder2$SoO, ParticipantOrder2$SoA, method="spearman", exact = FALSE))
+#tidy(cor.test(lvl1.SoO, lvl1.proprioception)
+tidy(cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Proprioception, method="spearman", exact = FALSE))
+#tidy(cor.test(lvl2.SoO, lvl2.proprioception)
+tidy(cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Proprioception, method="spearman", exact = FALSE))
+#tidy(cor.test(lvl1.SoO, lvl1.frustration)
+tidy(cor.test(ParticipantOrder1$SoO, ParticipantOrder1$Frustration, method="spearman", exact = FALSE))
+#tidy(cor.test(lvl2.SoO, lvl2.frustration)
+tidy(cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman", exact = FALSE))
 
 ```
 
@@ -348,22 +367,22 @@ cor.test(ParticipantOrder2$SoO, ParticipantOrder2$Frustration, method="spearman"
  Avatar <- dfData %>% filter(Level=="Avatar")
  Blocks <- dfData %>% filter(Level=="Blocks")
 #cor.test for Avatar SoA and SoO
-cor.test(Avatar$SoA, Avatar$SoO ,method="spearman", exact = FALSE)
+tidy(cor.test(Avatar$SoA, Avatar$SoO ,method="spearman", exact = FALSE))
 #cor.test for Blocks SoA and SoO
-cor.test(Blocks$SoA, Blocks$SoO ,method="spearman", exact = FALSE)
+tidy(cor.test(Blocks$SoA, Blocks$SoO ,method="spearman", exact = FALSE))
 #cor.test for Avatar SoA and propriception
-cor.test(Avatar$SoA, Avatar$Proprioception ,method="spearman", exact = FALSE)
+tidy(cor.test(Avatar$SoA, Avatar$Proprioception ,method="spearman", exact = FALSE))
 #cor.test for Blocks SoA and proprioception
-cor.test(Blocks$SoA, Blocks$Proprioception ,method="spearman", exact = FALSE)
+tidy(cor.test(Blocks$SoA, Blocks$Proprioception ,method="spearman", exact = FALSE))
 #cor.test for Avatar perf. and prop.
-cor.test(Avatar$accPerc, Avatar$Proprioception ,method="spearman", exact = FALSE)
+tidy(cor.test(Avatar$accPerc, Avatar$Proprioception ,method="spearman", exact = FALSE))
 #cor.test for Blocks perf. and prop.
-cor.test(Blocks$accPerc, Blocks$Proprioception ,method="spearman", exact = FALSE)
+tidy(cor.test(Blocks$accPerc, Blocks$Proprioception ,method="spearman", exact = FALSE))
 ```
 
 ```{r Correlation test for SoO all measurements}
 #correlation test on SoA
-cor.test(dfData$SoO, dfData$SoA, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$SoO, dfData$SoA, method="spearman", exact = FALSE))
 SoOSoAScatter <- ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 5) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -376,7 +395,7 @@ SoOSoAScatter <- ggplot(dfData,aes(x=SoO,y=SoA, colour=Level, fill=Level))+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on frustration
-cor.test(dfData$SoO, dfData$Frustration, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$SoO, dfData$Frustration, method="spearman", exact = FALSE))
 SoOFruScatter <- ggplot(dfData,aes(x=SoO,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -388,7 +407,7 @@ SoOFruScatter <- ggplot(dfData,aes(x=SoO,y=Frustration, colour=Level, fill=Level
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on Proprioception
-cor.test(dfData$SoO, dfData$Proprioception, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$SoO, dfData$Proprioception, method="spearman", exact = FALSE))
 SoOPropioScatter <- ggplot(dfData,aes(x=SoO,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -412,7 +431,7 @@ dev.off
 
 ```{r Correlation test for SoA, Frustration and Proprioception}
 #correlation test on Frustration
-cor.test(dfData$SoA, dfData$Frustration, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$SoA, dfData$Frustration, method="spearman", exact = FALSE))
 SoAFRuScatter <- ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -425,7 +444,7 @@ SoAFRuScatter <- ggplot(dfData,aes(x=SoA,y=Frustration, colour=Level, fill=Level
 
 
 #correlation test on Proprioception
-cor.test(dfData$SoA, dfData$Proprioception, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$SoA, dfData$Proprioception, method="spearman", exact = FALSE))
 SoAPropioScatter <- ggplot(dfData,aes(x=SoA,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -437,7 +456,7 @@ SoAPropioScatter <- ggplot(dfData,aes(x=SoA,y=Proprioception, colour=Level, fill
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on Proprioception and Frustration
-cor.test(dfData$Proprioception, dfData$Frustration, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$Proprioception, dfData$Frustration, method="spearman", exact = FALSE))
 ProprioFruScatter <- ggplot(dfData,aes(x=Proprioception,y=Frustration, colour=Level, fill=Level))+ 
   geom_point(position=position_jitter(h=0.08, w=0.08), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(1,7), y=c(1, 7))+
@@ -461,7 +480,7 @@ dev.off
 
 ```{r Correlation test for Performance on SoO, SoA, Frustration and Proprioception}
 #correlation test on SoO
-cor.test(dfData$accPerc, dfData$SoO, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$accPerc, dfData$SoO, method="spearman", exact = FALSE))
 PerfSoOScatter <- ggplot(dfData,aes(x=accPerc,y=SoO, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
@@ -473,7 +492,7 @@ PerfSoOScatter <- ggplot(dfData,aes(x=accPerc,y=SoO, colour=Level, fill=Level))+
   geom_smooth(method = "lm", fill = NA)
 
 #correlation test on SoA
-cor.test(dfData$accPerc, dfData$SoA, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$accPerc, dfData$SoA, method="spearman", exact = FALSE))
 PerfSoAScatter <- ggplot(dfData,aes(x=accPerc,y=SoA, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
@@ -484,7 +503,7 @@ PerfSoAScatter <- ggplot(dfData,aes(x=accPerc,y=SoA, colour=Level, fill=Level))+
   labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 #correlation test on Frustration
-cor.test(dfData$accPerc, dfData$Frustration, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$accPerc, dfData$Frustration, method="spearman", exact = FALSE))
 PerfFruScatter <- ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
@@ -495,7 +514,7 @@ PerfFruScatter <- ggplot(dfData,aes(x=accPerc,y=Frustration, colour=Level, fill=
   labs(fill = "Conditions", colour = "Conditions")+
   geom_smooth(method = "lm", fill = NA)
 #correlation test on Proprioception
-cor.test(dfData$accPerc, dfData$Proprioception, method="spearman", exact = FALSE)
+tidy(cor.test(dfData$accPerc, dfData$Proprioception, method="spearman", exact = FALSE))
 PerfProprioScatter <- ggplot(dfData,aes(x=accPerc,y=Proprioception, colour=Level, fill=Level))+
   geom_point(position=position_jitter(h=0.1, w=0.0), shape = 21, alpha = 0.5, size = 3) +
   expand_limits(x=c(0,1), y=c(1, 7))+
@@ -522,10 +541,11 @@ dev.off()
 
 ```{r Correlation test for Performance on Soa using orderNumber}
 #correlation test on SoA order 1
-cor.test(ParticipantOrder1$accPerc, ParticipantOrder1$SoA, method="spearman", exact = FALSE)
+tidy(cor.test(ParticipantOrder1$accPerc, ParticipantOrder1$SoA, method="spearman", exact = FALSE))
 ggplot(ParticipantOrder1,aes(x=accPerc,y=SoA, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
+ggplot(dfSummary,aes(x=accPerc,y=SoA, colour=Level))+ geom_jitter(width = .1,height = .1) + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)+theme_bw()
 #correlation test on SoA order 2
-cor.test(ParticipantOrder2$accPerc, ParticipantOrder2$SoA, method="spearman", exact = FALSE)
+tidy(cor.test(ParticipantOrder2$accPerc, ParticipantOrder2$SoA, method="spearman", exact = FALSE))
 ggplot(ParticipantOrder2,aes(x=accPerc,y=SoA, colour=Level))+ geom_point() + expand_limits(x=c(0,1), y=c(1, 7)) + geom_smooth(method = "lm", fill = NA)
 ```
 
@@ -740,7 +760,7 @@ SoOCompactPlot <- ggplot(gg2, aes(Level, SoO, colour=Level)) +
   theme_classic(base_size = 30) +
   geom_boxplot(aes(lower = SoO - ci, upper = SoO + ci, middle = SoO, ymin = SoO - 3*ci, ymax = SoO + 3*ci),
     stat = "identity", color="#454545", width=.5, alpha=0) +
-  geom_beeswarm(data = dfData, priority='density',cex=3, color="gray", aes(size=3, stroke=1)) +
+  geom_beeswarm(data = dfData, priority='density',cex=3, color="gray", aes(size=3, stroke=1)) + geom_line(data = dfData,aes(group=Participant))+
   scale_x_discrete(limits=c(), labels=c("Blocks", "Avatar")) +
   scale_y_continuous("ownership", limits=c(1, 7.5), labels = as.character(ID), breaks = ID) +
   ylab("SoO Scores") + xlab("") + theme(legend.position="none")
