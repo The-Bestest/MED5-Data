@@ -58,7 +58,23 @@ mood <- mood %>%
   mutate_if(is.character, stringr::str_replace_all, pattern = "P", replacement = "") %>%
   mutate(Participant = as.numeric(Participant)) %>%
   pivot_wider(names_from = X)
- 
+
+
+#Q1 I look forward to work with the BCI (brain-computer interface)	
+#Q2 I think I can deal with the difficulties of the BCI        		
+#Q3 I do not think I will do well		                                             
+#Q4 I feel pressured to perform well						
+#Q5 BCI is a big challenge for me		            			
+#Q6 I look forward to work with the BCI					
+#Q7 I am very curious how I will perform					
+#Q8 I dread that I can embarrass myself					
+#Q9 I am fully determined to give it my best				
+#Q10 I don’t need a reward for participating, I can have fun without	
+#Q11 It’s embarrassing for me to fail						
+#Q12 I think that everyone can control their brain activity		
+#Q13 I think I won’t be able to accomplish BCI task today		
+#Q14 When I do well in the BCI, I will be proud of my achievement	
+
 ```
  
 ```{r logData, echo=FALSE,message=F, warning=F,results='hide'}
