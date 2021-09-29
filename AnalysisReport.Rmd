@@ -211,6 +211,8 @@ broom::tidy(lm(SoA~Level*accPerc,data=dfSummary))
 broom::tidy(lm(Proprioception~orderNumber,data=dfSummary))
 broom::tidy(lm(SoO~Level,data=dfSummary))
 
+broom::tidy(lm(SoANEW~SoO+Performance, data = questionnaire))
+broom::tidy(lm(SoANEW~SoO*Performance, data = questionnaire))
 
 broom::tidy(lm(SoO~SoA*Level,data=dfSummary)) %>% mutate_if(is.numeric, round, 5)
 options(scipen = 999)
