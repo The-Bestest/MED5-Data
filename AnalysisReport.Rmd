@@ -1021,6 +1021,8 @@ png("SoOCompactPlot.png", width = 800, height = 600)
 plot(SoOCompactPlot2)
 dev.off()
 
+summary(lm(SoANEW~SoO+factor(Level)*Performance,dfSummary))
+
 ```
 # ```{r SoANEW compact plot}
 # # ID <- 1:7
@@ -1106,4 +1108,83 @@ dev.off()
 
 
 ```
+```{r HK additional analysis for main effects compact plot}
+library(scatterplot3d)
+dfSummary$ownership <-dfSummary$SoO
+fit.OPerf <- lm(formula = SoANEW ~ Performance + SoO , data = dfSummary)
+pd<-dfSummary %>% select(Performance ,SoO, SoANEW,Level)
+pd.aug<-lions.augmented <- augment(fit.OPerf, pd)
+p <- scatterplot3d(y=pd$SoO, z=pd$SoANEW, x=pd$Performance,angle=55,type='h',
+                   pch = 16, color = "steelblue")
 
+# add a plane representing the fit of the model
+p$plane3d(fit.OPerf, col='orangered')
+
+ggplot(pd.aug, aes(SoANEW, .resid)) + 
+    geom_point() + geom_smooth(method="lm", color="red",se=FALSE) +
+    geom_segment(aes(xend = SoANEW, yend = .fitted), linetype="dashed")
+
+ggplot(pd.aug, aes(Performance, .resid)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, color = "red", linetype='dashed') + 
+  labs(y = "Residuals", title = "Residual plot of the regression model.")
+
+mypalette <- c("firebrick", "royalblue") 
+sp <- scatterplot3d::scatterplot3d(y=pd$SoO, 
+                                   z=pd$SoANEW, 
+                                   x=pd$Performance,
+                                   angle = 45,
+                                   col = mypalette[as.numeric(as.factor(pd$Level))],
+                                   xlab="performance", ylab="ownership", zlab="agency")
+sp$plane3d(fit.OPerf, lty.box = "solid")#,
+           # polygon_args = list(col = rgb(.1, .2, .7, .5)) # Fill color
+
+ggplot(dfSummary,aes(x=SoO,y=SoANEW,size=Performance))+geom_point()
+
+orig <- sp$xyz.convert(y=pd$SoO, 
+                       z=pd$SoANEW, 
+                       x=pd$Performance)
+plane <- sp$xyz.convert(pd$Performance,
+                        pd$SoO, 
+                        fitted(fit.OPerf))
+i.negpos <- 1 + (resid(fit.OPerf) > 0)
+segments(orig$x, orig$y, plane$x, plane$y,
+         col = c("blue", "red")[i.negpos], 
+         lty = 1) # (2:1)[i.negpos]
+sp <- FactoClass::addgrids3d(y=pd$SoO, 
+                             z=pd$SoANEW, 
+                             x=pd$Performance,
+                             angle = 55)
+
+
+
+ggplot(dfSummary,aes(size=ownership,y=SoANEW,x=Performance/30))+geom_jitter(hight=.2,alpha=.5)+theme_bw()+ylab('agency')+xlab('performance (percentage of popped balloons)')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE)+scale_y_continuous(breaks=seq(1,7,1))+theme_bw()+  scale_x_continuous( labels = scales::percent,limits = c(0, 1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank())
+
+AP<- ggplot(dfSummary,aes(size=ownership,y=SoANEW,x=Performance,colour=Level,group=Level))+geom_jitter(height=.2,alpha=.5)+theme_bw()+ylab('agency')+xlab('performance (number of popped balloons)')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(0,30,5))+theme_bw()+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank())
+
+AO<- ggplot(dfSummary,aes(x=ownership,y=SoANEW,size=Performance,colour=Level,group=Level))+geom_jitter(width=.3,height=.3,alpha=.5)+ylab('agency')+xlab('ownership')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(1,7,1))+theme_bw()+   
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank())
+
+dfSummary %>% select(Participant, Performance) %>% group_by(Participant) %>% dplyr::mutate(n=1:n())%>% pivot_wider(names_from=n,values_from=Performance) %>% mutate(diff=`1`-`2`) %>% View()
+
+ dfSummary %>% select(Participant, Level, Performance) %>% mutate(Performance=Performance/30) %>% ggplot(aes(x=Performance,group=Level))+geom_density()
+
+ library(ggpubr)
+
+ ggarrange(AO, AP , 
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+ 
+
+```
