@@ -14,6 +14,7 @@ library(ggplot2)
 library(tidyverse)
 library(tidymodels)
 library(skimr)
+library(modelr)
 library(stringr)
 library(corrplot)
 library(RColorBrewer)
@@ -212,6 +213,7 @@ options(pillar.sigfig = 5)
 # broom::tidy(lm(Frustration~SoANEW+SoO+Performance+activateDelay,data=dfSummary))
 broom::tidy(lm(Frustration~Level,data=dfSummary)) %>%mutate_if(is.numeric, round, 5)
 broom::tidy(lm(Frustration~Level*orderNumber,data=dfSummary))
+broom::tidy(lm(Frustration~SoANEW+Performance,data=dfSummary))
 broom::tidy(lm(SoO~Level*orderNumber,data=dfSummary))
 broom::tidy(lm(SoANEW~Level*orderNumber,data=dfSummary))
 broom::tidy(lm(SoANEW~Level*Performance,data=dfSummary))
@@ -1164,7 +1166,7 @@ ggplot(dfSummary,aes(size=ownership,y=SoANEW,x=Performance/30))+geom_jitter(high
         panel.grid.minor.y = element_blank(),
         panel.grid.major.y = element_blank())
 
-AP<- ggplot(dfSummary,aes(size=ownership,y=SoANEW,x=Performance,colour=Level,group=Level))+geom_jitter(height=.2,alpha=.5)+theme_bw()+ylab('agency')+xlab('performance (number of popped balloons)')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(0,30,5))+theme_bw()+
+AP<- ggplot(dfSummary,aes(size=ownership,y=SoANEW,x=Performance,colour=Level,group=Level))+geom_jitter(height=.2,alpha=.5)+theme_bw()+ylab('perceived agency')+xlab('performance (number of popped balloons)')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(0,31,5))+theme_bw()+
   theme(panel.grid.minor.x = element_blank(),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.y = element_blank(),
@@ -1186,5 +1188,30 @@ dfSummary %>% select(Participant, Performance) %>% group_by(Participant) %>% dpl
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
  
+# create plot with trendline from predictions of both parameters
+modOLxP <- lm(SoANEW~SoO+Level*Performance,data=dfSummary)
+dfSummary<- dfSummary %>%  add_predictions(modOLxP) 
 
+
+
+ ggplot(dfSummary,aes(x=Performance,y=SoANEW,size=ownership,colour=Level,group=Level))+geom_jitter(width=.3,height=.3,alpha=.5)+ylab('agency')+xlab('performance')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(0,30,5))+theme_bw()
+ 
+  ggplot(dfSummary,aes(x=SoO,y=SoANEW,size=SoO))+geom_jitter(width=.3,height=.3,alpha=.5)+ylab('agency')+xlab('performance')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(1,7,1))+theme_bw()
+ 
+  dfSummary$LevXPerf <- as.numeric(as.factor(dfSummary$Level)) * dfSummary$Performance
+
+  dfSummary %>% 
+    mutate(embodiment=factor(Level, levels = c("Body","Blocks"))) %>%
+  ggplot(aes(size=ownership,y=SoANEW,x=Performance,colour=embodiment,group=embodiment))+geom_jitter(height=.2,alpha=.5)+theme_bw()+ylab('perceived agency')+xlab('MI-BCI performance (number of popped balloons)')+geom_smooth(method='lm', formula= y~x,show.legend = FALSE, se=FALSE)+scale_y_continuous(breaks=seq(1,7,1))+scale_x_continuous(breaks=seq(0,31,5))+theme_bw()
+  
+  
+  #SEM model structural equation modelling
+  m4<- 'SoO ~ 1 + Level
+    SoANEW ~ 1+  SoO + LevXPerf 
+    Frustration ~ 1  + LevXPerf + SoANEW 
+  '
+  fitm4<-sem(m4,data=dfSummary)
+  summary(fitm4)
+  modificationindices(fitm4)
+  fitm4
 ```
