@@ -1112,6 +1112,10 @@ dev.off()
 ```
 ```{r HK additional analysis for main effects compact plot}
 library(scatterplot3d)
+library(ggpubr)
+library(lavaan)
+library(tidySEM)
+
 dfSummary$ownership <-dfSummary$SoO
 fit.OPerf <- lm(formula = SoANEW ~ Performance + SoO , data = dfSummary)
 pd<-dfSummary %>% select(Performance ,SoO, SoANEW,Level)
@@ -1184,8 +1188,6 @@ dfSummary %>% select(Participant, Performance) %>% group_by(Participant) %>% dpl
 
  dfSummary %>% select(Participant, Level, Performance) %>% mutate(Performance=Performance/30) %>% ggplot(aes(x=Performance,group=Level))+geom_density()
 
- library(ggpubr)
-
  ggarrange(AO, AP , 
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
@@ -1217,8 +1219,7 @@ dfSummary<- dfSummary %>%  add_predictions(modOLxP)
   summary(fitm4)
   modificationindices(fitm4)
   fitm4
-  library(lavaan)
-  library(tidySEM)
+
   graph_sem(model = fitm4)
   
   prepare_graph(fitm4) %>%
