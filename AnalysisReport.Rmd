@@ -1217,6 +1217,7 @@ dfSummary<- dfSummary %>%  add_predictions(modOLxP)
   '
   fitm4<-lavaan::sem(m4,data=dfSummary)
   summary(fitm4)
+  fitMeasures(fitm4, c("cfi", "rmsea", "srmr"))
   modificationindices(fitm4)
   fitm4
 
