@@ -1210,8 +1210,8 @@ dfSummary<- dfSummary %>%  add_predictions(modOLxP)
   
   #SEM model structural equation modelling
   m4<- 'SoO ~ 1 + Level
-    SoANEW ~ 1+  SoO + LevXPerf 
-    Frustration ~ 1  + LevXPerf + SoANEW 
+    SoANEW ~ 1+  SoO + Performance 
+    Frustration ~ 1  + Performance + SoANEW 
   '
   fitm4<-lavaan::sem(m4,data=dfSummary)
   summary(fitm4)
