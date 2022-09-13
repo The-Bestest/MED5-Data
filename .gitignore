@@ -8,6 +8,6 @@
 .log
 .tex
 AnalysisReport_files/
-.png
-.md
-.html
+*.png
+*.utf8.md
+*.html
