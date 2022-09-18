@@ -1212,7 +1212,7 @@ dfSummary<- dfSummary %>%  add_predictions(modOLxP)
   
   #SEM model structural equation modelling
   m4<- 'SoO ~ 1 + Level
-    SoANEW ~ 1+  SoO + Performance 
+    SoANEW ~ 1+  SoO + Performance
     Frustration ~ 1  + Performance + SoANEW 
   '
   fitm4<-lavaan::sem(m4,data=dfSummary)
@@ -1230,4 +1230,25 @@ dfSummary<- dfSummary %>%  add_predictions(modOLxP)
   alpha_var(.2) %>%
   plot()
   
+    #SEM model structural equation modelling
+  m5<- 'SoO ~ 1 + Level + SoANEW
+    SoANEW ~ 1+ Performance
+    Frustration ~ 1  + Performance + SoANEW 
+  '
+  fitm5<-lavaan::sem(m5,data=dfSummary)
+  summary(fitm5)
+  fitMeasures(fitm4, c("cfi", "rmsea", "srmr"))
+  modificationindices(fitm5)
+  fitm5
+
+  graph_sem(model = fitm4)
+  
+  prepare_graph(fitm5) %>%
+  color_pos_edges("green") %>%
+  color_neg_edges("red") %>%
+  color_var("black") %>%
+  alpha_var(.2) %>%
+  plot()
+  
+  anova (fitm4, fitm5)
 ```
